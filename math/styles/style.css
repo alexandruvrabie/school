@@ -5,12 +5,14 @@ body {
     text-align: center;
     padding: 20px;
 }
+
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
 }
+
 #exerciseContainer, #exerciseList {
     width: 90%; /* Ajustează la 90% din lățimea containerului pentru a permite un spațiu pe margini */
     max-width: 600px; /* Poți ajusta această valoare în funcție de design-ul dorit */
@@ -24,12 +26,28 @@ body {
 }
 
 #exercise {
-    font-size: 24px;
+    font-size: 4rem;
     margin-right: 10px;
 }
+
+#exerciseList {
+    list-style: none; /* Elimină stilul implicit al listei */
+    padding: 0; /* Elimină padding-ul implicit */
+    width: 100%; /* Extinde lista pe întreaga lățime a containerului */
+    max-width: 600px; /* Menține o lățime maximă pentru coerență */
+    margin: 20px auto; /* Centrarea listei */
+    text-align: left; /* Alinează textul listei la stânga */
+}
+
+#exerciseList li {
+    font-size: 1.5rem; /* Mărește fontul pentru o mai bună vizualizare */
+    border-bottom: 1px solid #ddd; /* Adaugă o linie sub fiecare element al listei pentru a le separa vizual */
+    padding: 10px; /* Adaugă un spațiu interior pentru fiecare element al listei */
+}
+
 #answer {
-    width: 14ch; /* Setează lățimea input-ului pentru 4 caractere */
-    font-size: 1.5rem; /* Mărește fontul; ajustează valoarea după necesități */
+    width: 3ch; /* Setează lățimea input-ului pentru 4 caractere */
+    font-size: 4rem; /* Mărește fontul; ajustează valoarea după necesități */
     border: 2px solid #7FFFD4;
     border-radius: 5px;
     text-align: center;
@@ -38,27 +56,61 @@ body {
 #answer.incorrect {
     border-color: #FF6347;
 }
+
 button {
     background-color: #7FFFD4;
     border: none;
     border-radius: 5px;
     padding: 10px 20px;
-    font-size: 18px;
+    font-size: 2.5rem;
     cursor: pointer;
 }
+
 button:hover {
     background-color: #76EEC6;
 }
+
 #message, #bonusContainer {
     color: #FF4500;
-    font-size: 20px;
+    font-size: 2rem;
     margin: 20px 0;
 }
+
 .bonusImage {
     width: 100px;
     height: auto;
     display: block;
     margin: 10px auto;
+    opacity: 0.3; /* Inițializează imaginile bonus ca fiind "pale" */
+    transition: opacity 0.5s ease; /* Opțional: Adaugă o tranziție pentru efect vizual plăcut */
+}
+
+#bonusContainer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.bonusItem {
+    text-align: center; /* Alinează textul și imaginile din fiecare bonusItem */
+}
+
+.bonusTitle {
+    font-size: 1rem;
+    margin-bottom: 10px; /* Spațiu între titlu și imagine */
+}
+
+.bonusImage {
+    width: 100px;
+    height: auto;
+    margin: 0 auto 10px; /* Spațiu între imagine și bara de progres */
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+}
+
+.bonusProgress {
+    width: 100px; /* Lățimea corespunde cu cea a imaginii bonus */
+    height: 20px; /* Înălțimea barei de progres */
 }
 
 @media (max-width: 600px) {
@@ -68,22 +120,12 @@ button:hover {
         padding: 10px 5%; /* Ajustează padding-ul pentru a menține conținutul centrat */
     }
 
-    #exercise {
-        font-size: 4.5rem; /* Mărește fontul pentru mobile */
-    }
-
-    #answer {
-        font-size: 4.5rem; /* Mărește fontul pentru o mai bună vizibilitate */
-        width: auto; /* Permite inputului să se ajusteze la conținut */
-        max-width: 100%; /* Asigură că inputul nu depășește lățimea containerului */
-    }
-
     button {
-        font-size: 3rem; /* Mărește fontul butonului */
+        margin-top: 5px;
     }
 
     #message, #bonusContainer {
-        font-size: 3rem; /* Mărește fonturile pentru mesaje și containerul de bonus */
+        font-size: 2.5rem; /* Mărește fonturile pentru mesaje și containerul de bonus */
     }
 
     .bonusImage {

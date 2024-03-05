@@ -1,24 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exerciții de Matematică Interactive pentru Copii cu Bonusuri</title>
-  <link rel="stylesheet" href="styles/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exerciții de Matematică Interactive pentru Copii cu Bonusuri</title>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
 
-<h2>Exercițiu de Matematică pentru Copii</h2>
 <div class="container">
-  <div id="exerciseContainer">
-    <span id="exercise"></span>
-    <input type="number" id="answer" placeholder="Răspunde aici">
-    <button onclick="checkAnswer()">Verifică</button>
-  </div>
-  <div id="message"></div>
-  <div id="bonusContainer"></div>
-  <h3>Exerciții Rezolvate: <span id="exerciseCount">0</span></h3>
-  <ol id="exerciseList" reversed></ol>
+    <h2>Matematică: adunarea/scaderea pina la 20</h2>
+    <div id="exerciseContainer">
+        <span id="exercise"></span>
+        <input type="number" id="answer" placeholder="?">
+        <button onclick="checkAnswer()">Verifică</button>
+    </div>
+    <div id="message"></div>
+    <div id="bonusContainer">
+        <div class="bonusItem">
+            <div class="bonusTitle">Maestru Adunării</div>
+            <img src="images/maestrul-adunarii.webp" alt="Bonus Adunare" class="bonusImage" id="bonusAdunare"
+                 title="Completează 10 exerciții de adunare pentru a debloca acest bonus!">
+            <progress value="0" max="10" class="bonusProgress" id="progressAdunare"></progress>
+        </div>
+        <div class="bonusItem">
+            <div class="bonusTitle">Virtuozul Scăderii</div>
+            <img src="images/virtuozul-scaderii.webp" alt="Bonus Scădere" class="bonusImage" id="bonusScadere"
+                 title="Completează 10 exerciții de scădere pentru a debloca acest bonus!">
+            <progress value="0" max="10" class="bonusProgress" id="progressScadere"></progress>
+        </div>
+        <div class="bonusItem">
+            <div class="bonusTitle">Aventurier Numeric</div>
+            <img src="images/aventurier-numeric.webp" alt="Bonus Numere" class="bonusImage" id="bonusNumere"
+                 title="Folosește toate numerele de la 1 la 20 în exerciții pentru a debloca acest bonus!">
+            <progress value="0" max="20" class="bonusProgress" id="progressNumere"></progress>
+        </div>
+        <div class="bonusItem">
+            <div class="bonusTitle">Maestru al Preciziei</div>
+            <img src="images/precision-master.webp" alt="Bonus Precizie" class="bonusImage" id="bonusPrecizie"
+                 title="Rezolvă 20 de exerciții consecutiv corecte pentru a debloca acest bonus!">
+            <progress value="0" max="20" class="bonusProgress" id="progressPrecizie"></progress>
+        </div>
+        <div class="bonusItem">
+            <div class="bonusTitle">Viteza Luminii</div>
+            <img src="images/speed-light.webp" alt="Bonus Viteză" class="bonusImage" id="bonusViteza"
+                 title="Rezolvă 10 exerciții în 60 de secunde pentru a debloca acest bonus!">
+            <progress value="0" max="10" class="bonusProgress" id="speedBonusProgress"></progress>
+        </div>
+    </div>
+    <h3>Exerciții Rezolvate: <span id="exerciseCount">0</span></h3>
+    <ol id="exerciseList" reversed></ol>
 </div>
 
 <script src="js/script.js"></script>
