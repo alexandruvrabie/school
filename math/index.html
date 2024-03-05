@@ -8,15 +8,17 @@
 <body>
 
 <h2>Exercițiu de Matematică pentru Copii</h2>
-<div id="exerciseContainer">
-  <span id="exercise"></span>
-  <input type="number" id="answer" placeholder="Răspunde aici">
-  <button onclick="checkAnswer()">Verifică</button>
+<div class="container">
+  <div id="exerciseContainer">
+    <span id="exercise"></span>
+    <input type="number" id="answer" placeholder="Răspunde aici">
+    <button onclick="checkAnswer()">Verifică</button>
+  </div>
+  <div id="message"></div>
+  <div id="bonusContainer"></div>
+  <h3>Exerciții Rezolvate: <span id="exerciseCount">0</span></h3>
+  <ol id="exerciseList" reversed></ol>
 </div>
-<div id="message"></div>
-<div id="bonusContainer"></div>
-<h3>Exerciții Rezolvate: <span id="exerciseCount">0</span></h3>
-<ol id="exerciseList" reversed></ol>
 
 <script src="js/script.js"></script>
 </body>

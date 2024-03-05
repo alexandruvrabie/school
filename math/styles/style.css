@@ -5,29 +5,38 @@ body {
     text-align: center;
     padding: 20px;
 }
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+#exerciseContainer, #exerciseList {
+    width: 90%; /* Ajustează la 90% din lățimea containerului pentru a permite un spațiu pe margini */
+    max-width: 600px; /* Poți ajusta această valoare în funcție de design-ul dorit */
+}
+
 #exerciseContainer {
     background-color: #FFD700;
     padding: 20px;
     border-radius: 10px;
-    display: inline-block;
     margin: 10px 0;
 }
+
 #exercise {
     font-size: 24px;
     margin-right: 10px;
 }
 #answer {
-    font-size: 20px;
+    width: 14ch; /* Setează lățimea input-ului pentru 4 caractere */
+    font-size: 1.5rem; /* Mărește fontul; ajustează valoarea după necesități */
     border: 2px solid #7FFFD4;
     border-radius: 5px;
     text-align: center;
 }
+
 #answer.incorrect {
     border-color: #FF6347;
-}
-#exerciseList li {
-    text-align: left;
-    font-size: 18px;
 }
 button {
     background-color: #7FFFD4;
@@ -50,4 +59,35 @@ button:hover {
     height: auto;
     display: block;
     margin: 10px auto;
+}
+
+@media (max-width: 600px) {
+    #exerciseContainer, #exerciseList {
+        width: 100%; /* Extinde containerele pe întreaga lățime a paginii */
+        max-width: none; /* Elimină orice restricție de max-width */
+        padding: 10px 5%; /* Ajustează padding-ul pentru a menține conținutul centrat */
+    }
+
+    #exercise {
+        font-size: 4.5rem; /* Mărește fontul pentru mobile */
+    }
+
+    #answer {
+        font-size: 4.5rem; /* Mărește fontul pentru o mai bună vizibilitate */
+        width: auto; /* Permite inputului să se ajusteze la conținut */
+        max-width: 100%; /* Asigură că inputul nu depășește lățimea containerului */
+    }
+
+    button {
+        font-size: 3rem; /* Mărește fontul butonului */
+    }
+
+    #message, #bonusContainer {
+        font-size: 3rem; /* Mărește fonturile pentru mesaje și containerul de bonus */
+    }
+
+    .bonusImage {
+        width: 150px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
+        height: auto;
+    }
 }
