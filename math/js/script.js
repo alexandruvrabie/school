@@ -86,16 +86,20 @@ function checkAndDisplayBonus() {
     if (correctConsecutive >= 20) {
         document.getElementById("bonusPrecizie").style.opacity = 1;
         correctConsecutive = 0; // Resetează contorul după ce bonusul este acordat
+        createFallingEffect();
     }
     // Resetarea tracker-ului la completarea bonusului
     if (bonusTracker.adunare >= maxAdunare) {
         bonusTracker.adunare = 0;
+        createFallingEffect();
     }
     if (bonusTracker.scadere >= maxScadere) {
         bonusTracker.scadere = 0;
+        createFallingEffect();
     }
     if (numbersUsed.size >= maxNumere) {
         numbersUsed.clear();
+        createFallingEffect();
     }
 }
 
@@ -175,6 +179,8 @@ function incrementExercisesSolvedInChallenge() {
 
         // Actualizăm opacitatea imaginii pentru a indica deblocarea bonusului
         document.getElementById("bonusViteza").style.opacity = 1;
+
+        createFallingEffect();
 
         // Opțional: Resetăm provocarea imediat sau lăsăm cronometrul să expire
         // Resetăm manual aici deoarece utilizatorul a completat provocarea
