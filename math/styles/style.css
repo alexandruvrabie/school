@@ -26,7 +26,7 @@ body {
 }
 
 #exercise {
-    font-size: 4rem;
+    font-size: 3.8rem;
     margin-right: 10px;
 }
 
@@ -47,7 +47,7 @@ body {
 
 #answer {
     width: 3ch; /* Setează lățimea input-ului pentru 4 caractere */
-    font-size: 4rem; /* Mărește fontul; ajustează valoarea după necesități */
+    font-size: 3.8rem; /* Mărește fontul; ajustează valoarea după necesități */
     border: 2px solid #7FFFD4;
     border-radius: 5px;
     text-align: center;
@@ -87,14 +87,17 @@ button:hover {
 
 #bonusContainer {
     display: flex;
-    flex-wrap: wrap; /* Permite elementelor să treacă pe rândul următor dacă nu există spațiu suficient */
-    justify-content: center; /* Centrează elementele pe rând */
+    flex-wrap: wrap; /* Permite elementelor să treacă pe un nou rând dacă nu încap */
+    justify-content: center; /* Centrează elementele orizontal */
     gap: 20px; /* Spațiu între elementele de bonus */
 }
 
 .bonusItem {
-    /* Stiluri pentru elementele individuale de bonus */
+    flex: 1 0 21%; /* Flex-grow, flex-shrink, și flex-basis */
+    /* Flex-basis setat la 21% permite ca până la 4 elemente să încapă pe un rând,
+       dar va forța elementele să treacă pe un nou rând în cazul în care spațiul devine prea îngust */
     text-align: center;
+    min-width: 150px; /* Asigură o lățime minimă pentru fiecare element de bonus pentru lizibilitate */
 }
 
 .bonusTitle {
@@ -133,5 +136,10 @@ button:hover {
     .bonusImage {
         width: 150px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
         height: auto;
+    }
+
+    .bonusItem {
+        flex-basis: 45%; /* Ajustează flex-basis pentru a permite maxim două elemente pe rând pe dispozitive mobile */
+        /* Asigură că dimensiunea este suficientă pentru a menține maxim două elemente pe rând */
     }
 }
