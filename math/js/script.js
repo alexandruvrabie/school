@@ -17,6 +17,7 @@ let bonusStatus = {
 };
 let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
 const historyContainer = document.getElementById("exerciseList");
+let soundEnabled = false;
 
 function generateExercise() {
     let num1 = Math.floor(Math.random() * 20) + 1;
@@ -275,9 +276,10 @@ function loadFromLocalStorage() {
         // Actualizează contorul exercițiilor
         document.getElementById("exerciseCount").textContent = exerciseCount;
 
-        // Restaurează starea butonului de sunet (de exemplu, imaginea butonului)
-        const soundButton = document.getElementById("enableSoundButton");
-        soundButton.src = soundEnabled ? 'images/sound-on-icon.png' : 'images/sound-off-icon.png';
+        const soundButton = document.getElementById("soundToggleButton");
+        soundButton.classList.toggle('soundOn', soundEnabled);
+        soundButton.classList.toggle('soundOff', !soundEnabled);
+        soundButton.textContent = soundEnabled ? 'Cu sunet' : 'Fără sunet';
 
         updateProgress('Adunare', bonusTracker.adunare); // pentru adunare
         updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
@@ -306,9 +308,35 @@ function loadFromLocalStorage() {
     }
 }
 
+function updateSoundButton() {
+    const soundButton = document.getElementById('soundToggleButton');
+    if (soundEnabled) {
+        soundButton.classList.remove('soundOff');
+        soundButton.classList.add('soundOn');
+        soundButton.textContent = 'Cu sunet';
+    } else {
+        soundButton.classList.remove('soundOn');
+        soundButton.classList.add('soundOff');
+        soundButton.textContent = 'Fără sunet';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     loadFromLocalStorage();
     startSpeedChallenge(); // Asigurați-vă că aceasta este apelată după încărcarea datelor
+
+    // Listener pentru butonul de resetare
+    document.getElementById('resetButton').addEventListener('click', function() {
+        localStorage.clear(); // Șterge localStorage
+        window.location.reload(); // Reîncarcă pagina pentru a reseta aplicația
+    });
+
+    // Listener pentru butonul de sunet
+    document.getElementById('soundToggleButton').addEventListener('click', function() {
+        soundEnabled = !soundEnabled; // Comutăm starea sunetului
+        saveToLocalStorage(); // Salvăm noua stare a sunetului în localStorage
+        updateSoundButton(); // Actualizăm aspectul butonului de sunet
+    });
 });
 
 // Apelăm funcția la încărcarea paginii pentru a începe prima provocare
@@ -318,5 +346,6 @@ document.getElementById("answer").addEventListener("keyup", function (event) {
         checkAnswer();
     }
 });
+
 
 generateExercise();

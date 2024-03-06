@@ -13,7 +13,7 @@ body {
     width: 100%;
 }
 
-#exerciseContainer, #exerciseList {
+#bonusContainer, #exerciseContainer, #exerciseList {
     width: 90%; /* Ajustează la 90% din lățimea containerului pentru a permite un spațiu pe margini */
     max-width: 600px; /* Poți ajusta această valoare în funcție de design-ul dorit */
 }
@@ -114,24 +114,45 @@ button:hover {
     height: 20px; /* Înălțimea barei de progres */
 }
 
-.soundControl {
+#controlsContainer {
     display: flex;
-    align-items: center; /* Asigură că elementele sunt aliniate vertical în centru */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.soundButton, .resetButton {
+    font-size: 1.5rem;
+    color: white;
+    border: none;
     cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
 }
 
-.labelSound {
-    margin-right: 10px; /* Spațiere între text și imagine */
-    font-size: 1.5rem; /* Ajustează conform necesităților de design */
+.soundButton.soundOn {
+    background-color: #4CAF50; /* Verde pentru sunet activat */
 }
 
-.soundButtonIcon {
-    width: 30px;
-    height: 30px;
+.soundButton.soundOff {
+    background-color: #f44336; /* Roșu pentru sunet dezactivat */
+}
+
+.resetButton {
+    background-color: #2196F3; /* Albastru pentru butonul de resetare */
+}
+
+.soundButton:hover, .resetButton:hover {
+    filter: brightness(1.1);
+}
+
+.soundButton:active, .resetButton:active {
+    filter: brightness(0.9);
 }
 
 @media (max-width: 600px) {
-    #exerciseContainer, #exerciseList {
+    #bonusContainer, #exerciseContainer, #exerciseList {
         width: 100%; /* Extinde containerele pe întreaga lățime a paginii */
         max-width: none; /* Elimină orice restricție de max-width */
         padding: 10px 5%; /* Ajustează padding-ul pentru a menține conținutul centrat */
