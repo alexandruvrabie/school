@@ -114,6 +114,22 @@ button:hover {
     height: 20px; /* Înălțimea barei de progres */
 }
 
+.soundControl {
+    display: flex;
+    align-items: center; /* Asigură că elementele sunt aliniate vertical în centru */
+    cursor: pointer;
+}
+
+.labelSound {
+    margin-right: 10px; /* Spațiere între text și imagine */
+    font-size: 1.5rem; /* Ajustează conform necesităților de design */
+}
+
+.soundButtonIcon {
+    width: 30px;
+    height: 30px;
+}
+
 @media (max-width: 600px) {
     #exerciseContainer, #exerciseList {
         width: 100%; /* Extinde containerele pe întreaga lățime a paginii */

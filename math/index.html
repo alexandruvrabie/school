@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="images/favicon.ico">
+    <meta property="og:title" content="Exerciții de Matematică Interactive pentru Copii" />
+    <meta property="og:description" content="Îmbunătățește-ți abilitățile matematice cu o varietate de exerciții interactive și distractive." />
+    <meta property="og:image" content="https://alexandruvrabie.github.io/school/math/images/math.webp" />
+    <meta property="og:url" content="https://alexandruvrabie.github.io/school/math/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Matematică Interactivă pentru Copii" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exerciții de Matematică Interactive pentru Copii cu Bonusuri</title>
+    <title>Exerciții de Matematică Interactive pentru Copii</title>
     <link rel="stylesheet" href="styles/win.css">
     <link rel="stylesheet" href="styles/style.css">
 </head>
@@ -11,8 +18,11 @@
 
 <div class="container">
     <h2>Matematică: adunarea/scaderea pina la 20</h2>
-    <img id="enableSoundButton" src="images/sound-off-icon.png" alt="Activează Sunetul" class="soundButtonIcon">
-    <div id="exerciseContainer">
+    <div class="soundControl">
+        <label for="enableSoundButton" class="labelSound">Sunet</label>
+        <img id="enableSoundButton" src="images/sound-off-icon.png" alt="Activează Sunetul" class="soundButtonIcon">
+    </div>
+        <div id="exerciseContainer">
         <span id="exercise"></span>
         <input type="number" id="answer" placeholder="?">
         <button onclick="checkAnswer()">Verifică</button>
