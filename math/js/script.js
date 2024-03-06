@@ -250,13 +250,13 @@ function loadFromLocalStorage() {
     const appData = JSON.parse(localStorage.getItem('mathAppData'));
     if (appData) {
         // Restaurarea stării variabilelor
-        soundEnabled = appData.soundEnabled;
-        bonusTracker = appData.bonusTracker;
-        numbersUsed = new Set(appData.numbersUsed);
-        exerciseCount = appData.exerciseCount;
-        consecutiveCorrect = appData.consecutiveCorrect;
-        correctConsecutive = appData.correctConsecutive;
-        exercisesSolvedInChallenge = appData.exercisesSolvedInChallenge;
+        soundEnabled = appData?.soundEnabled ?? false;
+        bonusTracker = appData?.bonusTracker ?? { adunare: 0, scadere: 0, numere: 0, precizie: 0, viteza: 0 };
+        numbersUsed = new Set(appData?.numbersUsed ?? []);
+        exerciseCount = appData?.exerciseCount ?? 0;
+        consecutiveCorrect = appData?.consecutiveCorrect ?? 0;
+        correctConsecutive = appData?.correctConsecutive ?? 0;
+        exercisesSolvedInChallenge = appData?.exercisesSolvedInChallenge ?? 0;
         bonusStatus = appData.bonusStatus || {
             adunare: false,
             scadere: false,
