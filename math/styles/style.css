@@ -171,3 +171,12 @@ button:hover {
         height: auto;
     }
 }
+
+@keyframes glowAnimation {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.5); } /* Intensitatea luminozității crește */
+}
+
+.glowEffect {
+    animation: glowAnimation 1s ease-in-out infinite; /* Animatie mai rapidă și repetitivă */
+}

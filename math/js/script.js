@@ -67,9 +67,6 @@ function checkAnswer() {
         generateExercise(); // Generează un nou exercițiu
         correctConsecutive++;
         updateProgress('Precizie', correctConsecutive);
-        if (correctConsecutive >= 20) {
-            createFallingEffect();
-        }
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
     } else if (attempts < 2) {
         playErrorSound();
@@ -159,6 +156,7 @@ function updateProgress(bonusType, progress) {
         if (progress >= progressElement.max) {
             const bonusId = `bonus${bonusType.charAt(0).toUpperCase() + bonusType.slice(1)}`;
             document.getElementById(bonusId).style.opacity = 1; // Înlătură opacitatea pentru bonus completat
+            applyGlowEffect(bonusId);
         }
     }
 }
@@ -197,6 +195,16 @@ function playErrorSound() {
     }
 }
 
+function applyGlowEffect(bonusId) {
+    const bonusImage = document.getElementById(bonusId);
+    bonusImage.classList.add('glowEffect');
+
+    // Oprirea efectului de licărire după 5 secunde
+    setTimeout(() => {
+        bonusImage.classList.remove('glowEffect');
+    }, 5000); // 5000ms = 5 secunde
+}
+
 // Funcția care este apelată la fiecare răspuns corect al utilizatorului
 function incrementExercisesSolvedInChallenge() {
     const maxExercises = 10;
@@ -213,6 +221,7 @@ function incrementExercisesSolvedInChallenge() {
         document.getElementById("bonusViteza").style.opacity = 1;
 
         bonusStatus.viteza = true;
+        applyGlowEffect('bonusViteza');
         createFallingEffect();
 
         // Opțional: Resetăm provocarea imediat sau lăsăm cronometrul să expire
