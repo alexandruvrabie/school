@@ -57,8 +57,11 @@ function checkAnswer() {
         generateExercise(); // Generează un nou exercițiu
         correctConsecutive++;
         updateProgress('Precizie', correctConsecutive);
+        document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
     } else if (attempts < 2) {
-        document.getElementById("message").textContent = "Incorect. Mai ai o încercare!";
+        document.getElementById("message").textContent = "Incorect. Mai încearcă!";
+        document.getElementById("answer").placeholder = userAnswer; // Setează răspunsul greșit ca placeholder
+        document.getElementById("answer").value = ''; // Golește câmpul de input pentru o nouă încercare
     } else {
         document.getElementById("message").textContent = "Incorect. Vei avea mai mult succes data viitoare!";
         addExerciseToHistory(false); // Adaugă exercițiul cu indicarea că este incorect
@@ -66,6 +69,7 @@ function checkAnswer() {
         generateExercise(); // Generează un nou exercițiu
         correctConsecutive = 0; // Resetează contorul pentru răspunsuri corecte consecutive
         updateProgress('Precizie', correctConsecutive);
+        document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul pentru următoarea întrebare
     }
 }
 

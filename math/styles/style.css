@@ -87,12 +87,14 @@ button:hover {
 
 #bonusContainer {
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap; /* Permite elementelor să treacă pe rândul următor dacă nu există spațiu suficient */
+    justify-content: center; /* Centrează elementele pe rând */
+    gap: 20px; /* Spațiu între elementele de bonus */
 }
 
 .bonusItem {
-    text-align: center; /* Alinează textul și imaginile din fiecare bonusItem */
+    /* Stiluri pentru elementele individuale de bonus */
+    text-align: center;
 }
 
 .bonusTitle {
