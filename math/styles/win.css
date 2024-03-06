@@ -35,3 +35,9 @@
     background-color: pink;
     border-radius: 5px;
 }
+
+.soundButtonIcon {
+    width: auto; /* sau orice altă dimensiune mică preferi */
+    height: 50px; /* menține proporțiile ajustând înălțimea corespunzător */
+    cursor: pointer; /* opțional, pentru a indica faptul că este clicabil */
+}

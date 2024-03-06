@@ -1,4 +1,28 @@
 // Conținutul fișierului win.js
+
+let soundEnabled = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Inițializarea stării butonului de sunet la încărcarea paginii
+    var soundButton = document.getElementById('enableSoundButton');
+    soundButton.src = 'images/sound-off-icon.png'; // Iconița pentru sunet dezactivat
+    soundButton.style.display = 'block';
+
+    soundButton.addEventListener('click', function() {
+        soundEnabled = !soundEnabled; // Comută starea sunetului
+        this.src = soundEnabled ? 'images/sound-on-icon.png' : 'images/sound-off-icon.png'; // Actualizează iconița în funcție de starea sunetului
+    });
+});
+
+function playWinSound() {
+    if (soundEnabled) {
+        var winSound = document.getElementById('winSound');
+        if (winSound) {
+            winSound.play();
+        }
+    }
+}
+
 function createFallingEffect() {
     for (let i = 0; i < 20; i++) {
         const star = document.createElement('div');
@@ -19,7 +43,8 @@ function createFallingEffect() {
     }
 
     let winSound = document.getElementById('winSound');
-    if (winSound) {
-        winSound.play();
+    if (winSound && soundEnabled) {
+        playWinSound(); // Opțional: Redă un sunet imediat ca feedback
     }
 }
+
