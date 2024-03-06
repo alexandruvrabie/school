@@ -12,7 +12,32 @@ body {
     align-items: center;
     width: 100%;
 }
+#rangeSettings {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
+#rangeSettings input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#rangeSettings button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+#rangeSettings button:hover {
+    background-color: #45a049;
+}
 #bonusContainer, #exerciseContainer, #exerciseList {
     width: 90%; /* Ajustează la 90% din lățimea containerului pentru a permite un spațiu pe margini */
     max-width: 600px; /* Poți ajusta această valoare în funcție de design-ul dorit */

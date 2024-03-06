@@ -18,10 +18,12 @@ let bonusStatus = {
 let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
 const historyContainer = document.getElementById("exerciseList");
 let soundEnabled = false;
+let minNumber = 1;
+let maxNumber = 20;
 
 function generateExercise() {
-    let num1 = Math.floor(Math.random() * 20) + 1;
-    let num2 = Math.floor(Math.random() * 20) + 1;
+    let num1 = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+    let num2 = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
     let exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
     if (exerciseType === "subtraction") {
         if (num1 < num2) {
@@ -30,7 +32,7 @@ function generateExercise() {
         correctAnswer = num1 - num2;
     } else {
         correctAnswer = num1 + num2;
-        if (correctAnswer > 20) { // Regenerare numere dacă suma depășește 20
+        if (correctAnswer > maxNumber) { // Regenerare numere dacă suma depășește maxNumber
             generateExercise();
             return;
         }
@@ -43,6 +45,25 @@ function generateExercise() {
     document.getElementById("message").textContent = '';
     attempts = 0; // Resetăm încercările pentru noul exercițiu
 }
+
+function updateRange() {
+    // Actualizează valorile minime și maxime bazate pe inputul utilizatorului
+    minNumber = parseInt(document.getElementById('minNumberInput').value, 10) || minNumber;
+    maxNumber = parseInt(document.getElementById('maxNumberInput').value, 10) || maxNumber;
+
+    // Resetează localStorage și salvează doar valorile min și max
+    localStorage.clear();
+    localStorage.setItem('minNumber', minNumber);
+    localStorage.setItem('maxNumber', maxNumber);
+    localStorage.setItem('soundEnabled', soundEnabled);
+
+    // Reîncărcăm pagina pentru a aplica schimbările
+    window.location.reload();
+}
+
+// Adăugați listeneri pentru inputuri pentru a actualiza intervalul la schimbare
+document.getElementById('minNumberInput').addEventListener('change', updateRange);
+document.getElementById('maxNumberInput').addEventListener('change', updateRange);
 
 function checkAnswer() {
     const userAnswer = parseInt(document.getElementById("answer").value, 10);
@@ -88,7 +109,7 @@ function checkAnswer() {
 
 function checkAndDisplayBonus() {
     // Presupunând că avem 10 exerciții pentru adunare și scădere și 20 pentru aventurierNumeric
-    const maxAdunare = 10, maxScadere = 10, maxNumere = 20;
+    const maxAdunare = 10, maxScadere = 10;
 
     // Actualizează progresul pentru fiecare tip de exercițiu
     updateProgress('Adunare', bonusTracker.adunare); // pentru adunare
@@ -109,11 +130,11 @@ function checkAndDisplayBonus() {
         bonusTracker.adunare = 0;
     }
     if (bonusTracker.scadere >= maxScadere) {
-        bonusStatus.scadere =true;
+        bonusStatus.scadere = true;
         createFallingEffect();
         bonusTracker.scadere = 0;
     }
-    if (numbersUsed.size >= maxNumere) {
+    if (numbersUsed.size >= maxNumber) {
         bonusStatus.numere = true;
         createFallingEffect();
         numbersUsed.clear();
@@ -241,17 +262,35 @@ function saveToLocalStorage() {
         correctConsecutive,
         exercisesSolvedInChallenge,
         bonusStatus,
-        exercisesHistory
+        exercisesHistory,
+        minNumber,
+        maxNumber
     };
     localStorage.setItem('mathAppData', JSON.stringify(appData));
 }
 
 function loadFromLocalStorage() {
-    const appData = JSON.parse(localStorage.getItem('mathAppData'));
+    const savedMinNumber = localStorage.getItem('minNumber');
+    const savedMaxNumber = localStorage.getItem('maxNumber');
+    if (savedMinNumber !== null) minNumber = parseInt(savedMinNumber, 10);
+    if (savedMaxNumber !== null) maxNumber = parseInt(savedMaxNumber, 10);
+
+    document.getElementById('minNumberInput').value = minNumber;
+    document.getElementById('maxNumberInput').value = maxNumber;
+
+    const savedSoundEnabled = localStorage.getItem('soundEnabled');
+    if (savedSoundEnabled !== null) { // Verifică dacă valoarea există în localStorage
+        soundEnabled = savedSoundEnabled === 'true'; // Convertirea șirului de caractere în boolean
+        const soundButton = document.getElementById("soundToggleButton");
+        soundButton.classList.toggle('soundOn', soundEnabled);
+        soundButton.classList.toggle('soundOff', !soundEnabled);
+        soundButton.textContent = soundEnabled ? 'Cu sunet' : 'Fără sunet';
+    }
+
+    const appData = JSON.parse(localStorage.getItem('mathAppData')) || {};
     if (appData) {
         // Restaurarea stării variabilelor
-        soundEnabled = appData?.soundEnabled ?? false;
-        bonusTracker = appData?.bonusTracker ?? { adunare: 0, scadere: 0, numere: 0, precizie: 0, viteza: 0 };
+        bonusTracker = appData?.bonusTracker ?? {adunare: 0, scadere: 0, numere: 0, precizie: 0, viteza: 0};
         numbersUsed = new Set(appData?.numbersUsed ?? []);
         exerciseCount = appData?.exerciseCount ?? 0;
         consecutiveCorrect = appData?.consecutiveCorrect ?? 0;
@@ -302,18 +341,23 @@ function loadFromLocalStorage() {
         if (bonusTracker.scadere >= 10) {
             document.getElementById("bonusScadere").style.opacity = 1;
         }
-        if (numbersUsed.size >= 20) {
+        if (numbersUsed.size >= maxNumber) {
             document.getElementById("bonusNumere").style.opacity = 1;
         }
 
         // Restaurează istoricul exercițiilor
         historyContainer.innerHTML = ''; // Curăță lista curentă
-        appData.exercisesHistory.forEach(exercise => {
-            const listItem = document.createElement("li");
-            listItem.textContent = `${exercise.question} ${exercise.userAnswer} - ${exercise.isCorrect ? "Corect" : "Incorect"}`;
-            listItem.style.color = exercise.isCorrect ? "green" : "red";
-            historyContainer.appendChild(listItem);
-        });
+        if (appData && appData.exercisesHistory) {
+            appData.exercisesHistory.forEach(exercise => {
+                const listItem = document.createElement("li");
+                listItem.textContent = `${exercise.question} ${exercise.userAnswer} - ${exercise.isCorrect ? "Corect" : "Incorect"}`;
+                listItem.style.color = exercise.isCorrect ? "green" : "red";
+                historyContainer.appendChild(listItem);
+            });
+        } else {
+            // Inițializați exercisesHistory cu o valoare implicită (de exemplu, un array gol)
+            appData.exercisesHistory = [];
+        }
     }
 }
 
@@ -330,23 +374,12 @@ function updateSoundButton() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadFromLocalStorage();
-    startSpeedChallenge(); // Asigurați-vă că aceasta este apelată după încărcarea datelor
-
-    // Listener pentru butonul de resetare
-    document.getElementById('resetButton').addEventListener('click', function() {
-        localStorage.clear(); // Șterge localStorage
-        window.location.reload(); // Reîncarcă pagina pentru a reseta aplicația
-    });
-
-    // Listener pentru butonul de sunet
-    document.getElementById('soundToggleButton').addEventListener('click', function() {
-        soundEnabled = !soundEnabled; // Comutăm starea sunetului
-        saveToLocalStorage(); // Salvăm noua stare a sunetului în localStorage
-        updateSoundButton(); // Actualizăm aspectul butonului de sunet
-    });
-});
+function updateProgressMax() {
+    const progressNumere = document.getElementById('progressNumere');
+    if (progressNumere) {
+        progressNumere.max = maxNumber - minNumber + 1; // Presupunând că vrei toate numerele între minNumber și maxNumber
+    }
+}
 
 // Apelăm funcția la încărcarea paginii pentru a începe prima provocare
 document.addEventListener("DOMContentLoaded", startSpeedChallenge);
@@ -356,5 +389,23 @@ document.getElementById("answer").addEventListener("keyup", function (event) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    loadFromLocalStorage();
+    updateProgressMax();
+    startSpeedChallenge(); // Asigurați-vă că aceasta este apelată după încărcarea datelor
 
-generateExercise();
+    // Listener pentru butonul de resetare
+    document.getElementById('resetButton').addEventListener('click', function () {
+        localStorage.clear(); // Șterge localStorage
+        window.location.reload(); // Reîncarcă pagina pentru a reseta aplicația
+    });
+
+    // Listener pentru butonul de sunet
+    document.getElementById('soundToggleButton').addEventListener('click', function () {
+        soundEnabled = !soundEnabled; // Comutăm starea sunetului
+        saveToLocalStorage(); // Salvăm noua stare a sunetului în localStorage
+        updateSoundButton(); // Actualizăm aspectul butonului de sunet
+    });
+
+    generateExercise(); // Generăm primul exercițiu după ce totul este încărcat
+});
