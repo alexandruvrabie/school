@@ -17,4 +17,9 @@ function createFallingEffect() {
         ribbon.style.top = `${-Math.random() * 100}px`; // Asigură că panglicile încep deasupra viewport-ului
         ribbon.style.animationDelay = `${Math.random() * 2}s`;
     }
+
+    let winSound = document.getElementById('winSound');
+    if (winSound) {
+        winSound.play();
+    }
 }
