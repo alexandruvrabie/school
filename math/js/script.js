@@ -59,10 +59,12 @@ function checkAnswer() {
         updateProgress('Precizie', correctConsecutive);
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
     } else if (attempts < 2) {
+        playErrorSound();
         document.getElementById("message").textContent = "Incorect. Mai încearcă!";
         document.getElementById("answer").placeholder = userAnswer; // Setează răspunsul greșit ca placeholder
         document.getElementById("answer").value = ''; // Golește câmpul de input pentru o nouă încercare
     } else {
+        playErrorSound();
         document.getElementById("message").textContent = "Incorect. Vei avea mai mult succes data viitoare!";
         addExerciseToHistory(false); // Adaugă exercițiul cu indicarea că este incorect
         consecutiveCorrect = 0; // Resetează contorul pentru corecte consecutive
@@ -84,22 +86,22 @@ function checkAndDisplayBonus() {
 
     // Maestru al Preciziei
     if (correctConsecutive >= 20) {
+        createFallingEffect();
         document.getElementById("bonusPrecizie").style.opacity = 1;
         correctConsecutive = 0; // Resetează contorul după ce bonusul este acordat
-        createFallingEffect();
     }
     // Resetarea tracker-ului la completarea bonusului
     if (bonusTracker.adunare >= maxAdunare) {
-        bonusTracker.adunare = 0;
         createFallingEffect();
+        bonusTracker.adunare = 0;
     }
     if (bonusTracker.scadere >= maxScadere) {
-        bonusTracker.scadere = 0;
         createFallingEffect();
+        bonusTracker.scadere = 0;
     }
     if (numbersUsed.size >= maxNumere) {
-        numbersUsed.clear();
         createFallingEffect();
+        numbersUsed.clear();
     }
 }
 
@@ -163,6 +165,13 @@ function startSpeedChallenge() {
             startSpeedChallenge();
         }
     }, 1000); // Verificăm timpul la fiecare secundă
+}
+
+function playErrorSound() {
+    var errorSound = document.getElementById('errorSound');
+    if (errorSound) {
+        errorSound.play();
+    }
 }
 
 // Funcția care este apelată la fiecare răspuns corect al utilizatorului
