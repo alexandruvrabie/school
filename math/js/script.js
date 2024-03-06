@@ -8,6 +8,15 @@ let correctConsecutive = 0; // Pentru bonusul "Maestru al Preciziei"
 let speedChallengeTimer; // Cronometru pentru provocarea de viteză
 let speedChallengeStart; // Timpul de start al provocării curente
 let exercisesSolvedInChallenge = 0; // Numărul de exerciții rezolvate în provocarea curentă
+let bonusStatus = {
+    adunare: false,
+    scadere: false,
+    numere: false,
+    precizie: false,
+    viteza: false
+};
+let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
+const historyContainer = document.getElementById("exerciseList");
 
 function generateExercise() {
     let num1 = Math.floor(Math.random() * 20) + 1;
@@ -57,6 +66,9 @@ function checkAnswer() {
         generateExercise(); // Generează un nou exercițiu
         correctConsecutive++;
         updateProgress('Precizie', correctConsecutive);
+        if (correctConsecutive >= 20) {
+            createFallingEffect();
+        }
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
     } else if (attempts < 2) {
         playErrorSound();
@@ -73,6 +85,7 @@ function checkAnswer() {
         updateProgress('Precizie', correctConsecutive);
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul pentru următoarea întrebare
     }
+    saveToLocalStorage(); // Salvăm starea curentă după fiecare răspuns verificat
 }
 
 function checkAndDisplayBonus() {
@@ -86,29 +99,34 @@ function checkAndDisplayBonus() {
 
     // Maestru al Preciziei
     if (correctConsecutive >= 20) {
+        bonusStatus.precizie = true;
         createFallingEffect();
         document.getElementById("bonusPrecizie").style.opacity = 1;
         correctConsecutive = 0; // Resetează contorul după ce bonusul este acordat
     }
     // Resetarea tracker-ului la completarea bonusului
     if (bonusTracker.adunare >= maxAdunare) {
+        bonusStatus.adunare = true;
         createFallingEffect();
         bonusTracker.adunare = 0;
     }
     if (bonusTracker.scadere >= maxScadere) {
+        bonusStatus.scadere =true;
         createFallingEffect();
         bonusTracker.scadere = 0;
     }
     if (numbersUsed.size >= maxNumere) {
+        bonusStatus.numere = true;
         createFallingEffect();
         numbersUsed.clear();
     }
+    saveToLocalStorage(); // Salvăm starea curentă după verificarea bonusurilor
 }
 
 function addExerciseToHistory(isCorrect) {
     const exerciseText = document.getElementById("exercise").textContent;
     const userAnswer = document.getElementById("answer").value;
-    const historyContainer = document.getElementById("exerciseList");
+
     const listItem = document.createElement("li");
     listItem.textContent = `${exerciseText} ${userAnswer} - ${isCorrect ? "Corect" : "Incorect"}`;
 
@@ -119,6 +137,10 @@ function addExerciseToHistory(isCorrect) {
     }
 
     historyContainer.prepend(listItem); // Adaugă elementul la lista de istoric
+
+    // Actualizăm istoricul exercițiilor și salvăm în localStorage
+    exercisesHistory.unshift({question: exerciseText, userAnswer, isCorrect}); // Adaugă la începutul listei pentru a menține ordinea cronologică
+    saveToLocalStorage();
 }
 
 function updateNumbersUsed(exerciseText) {
@@ -189,6 +211,7 @@ function incrementExercisesSolvedInChallenge() {
         // Actualizăm opacitatea imaginii pentru a indica deblocarea bonusului
         document.getElementById("bonusViteza").style.opacity = 1;
 
+        bonusStatus.viteza = true;
         createFallingEffect();
 
         // Opțional: Resetăm provocarea imediat sau lăsăm cronometrul să expire
@@ -197,6 +220,96 @@ function incrementExercisesSolvedInChallenge() {
         startSpeedChallenge();
     }
 }
+
+function saveToLocalStorage() {
+    const appData = {
+        soundEnabled,
+        bonusTracker,
+        numbersUsed: Array.from(numbersUsed),
+        exerciseCount,
+        consecutiveCorrect,
+        correctConsecutive,
+        exercisesSolvedInChallenge,
+        bonusStatus,
+        exercisesHistory
+    };
+    localStorage.setItem('mathAppData', JSON.stringify(appData));
+}
+
+function loadFromLocalStorage() {
+    const appData = JSON.parse(localStorage.getItem('mathAppData'));
+    if (appData) {
+        // Restaurarea stării variabilelor
+        soundEnabled = appData.soundEnabled;
+        bonusTracker = appData.bonusTracker;
+        numbersUsed = new Set(appData.numbersUsed);
+        exerciseCount = appData.exerciseCount;
+        consecutiveCorrect = appData.consecutiveCorrect;
+        correctConsecutive = appData.correctConsecutive;
+        exercisesSolvedInChallenge = appData.exercisesSolvedInChallenge;
+        bonusStatus = appData.bonusStatus || {
+            adunare: false,
+            scadere: false,
+            numere: false,
+            precizie: false,
+            viteza: false
+        };
+        exercisesHistory = appData.exercisesHistory || []; // Încarcă istoricul sau inițializează-l ca listă goală
+
+        // Restaurează UI-ul bazat pe bonusStatus
+        Object.keys(bonusStatus).forEach(key => {
+            if (bonusStatus[key]) {
+                document.getElementById(`bonus${key.charAt(0).toUpperCase() + key.slice(1)}`).style.opacity = 1;
+            }
+        });
+
+        // Restaurează istoricul exercițiilor în UI
+        historyContainer.innerHTML = ''; // Curăță conținutul actual
+        exercisesHistory.forEach(exercise => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${exercise.question} ${exercise.userAnswer} - ${exercise.isCorrect ? "Corect" : "Incorect"}`;
+            listItem.style.color = exercise.isCorrect ? "green" : "red";
+            historyContainer.prepend(listItem); // Asigură că cele mai recente intrări sunt la început
+        });
+
+        // Actualizează contorul exercițiilor
+        document.getElementById("exerciseCount").textContent = exerciseCount;
+
+        // Restaurează starea butonului de sunet (de exemplu, imaginea butonului)
+        const soundButton = document.getElementById("enableSoundButton");
+        soundButton.src = soundEnabled ? 'images/sound-on-icon.png' : 'images/sound-off-icon.png';
+
+        updateProgress('Adunare', bonusTracker.adunare); // pentru adunare
+        updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
+        updateProgress('Numere', numbersUsed.size); // pentru numere utilizate
+        updateProgress('Precizie', correctConsecutive);
+
+        // Restaurează opacitatea elementelor bonus dacă progresele corespunzătoare au fost atinse
+        if (bonusTracker.adunare >= 10) {
+            document.getElementById("bonusAdunare").style.opacity = 1;
+        }
+        if (bonusTracker.scadere >= 10) {
+            document.getElementById("bonusScadere").style.opacity = 1;
+        }
+        if (numbersUsed.size >= 20) {
+            document.getElementById("bonusNumere").style.opacity = 1;
+        }
+
+        // Restaurează istoricul exercițiilor
+        historyContainer.innerHTML = ''; // Curăță lista curentă
+        appData.exercisesHistory.forEach(exercise => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${exercise.question} ${exercise.userAnswer} - ${exercise.isCorrect ? "Corect" : "Incorect"}`;
+            listItem.style.color = exercise.isCorrect ? "green" : "red";
+            historyContainer.appendChild(listItem);
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadFromLocalStorage();
+    startSpeedChallenge(); // Asigurați-vă că aceasta este apelată după încărcarea datelor
+});
 
 // Apelăm funcția la încărcarea paginii pentru a începe prima provocare
 document.addEventListener("DOMContentLoaded", startSpeedChallenge);
