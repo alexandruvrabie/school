@@ -102,6 +102,28 @@ button:hover {
     font-size: 2rem;
     margin: 20px 0;
 }
+#answer.correct {
+    border-color: #4CAF50; /* Verde, o culoare frecvent asociată cu succesul */
+}
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+#message {
+    opacity: 0; /* Inițializăm opacitatea la 0 */
+    animation: fadeOut 10s forwards; /* Aplicăm animația */
+}
+#message.successMessage {
+    color: #4CAF50; /* Aceeași culoare verde pentru mesajele de succes */
+}
+#message.errorMessage {
+    color: #FF4500;
+}
 
 .bonusImage {
     width: 100px;

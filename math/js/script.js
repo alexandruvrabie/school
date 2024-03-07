@@ -42,7 +42,6 @@ function generateExercise() {
     document.getElementById("answer").classList.remove("incorrect");
     document.getElementById("answer").disabled = false;
     document.getElementById("answer").focus();
-    document.getElementById("message").textContent = '';
     attempts = 0; // Resetăm încercările pentru noul exercițiu
 }
 
@@ -69,10 +68,13 @@ function checkAnswer() {
     const userAnswer = parseInt(document.getElementById("answer").value, 10);
     const exerciseText = document.getElementById("exercise").textContent;
     const exerciseType = exerciseText.includes("+") ? "adunare" : "scadere";
+
+    // Verifică dacă răspunsul este un număr
     if (isNaN(userAnswer)) {
-        document.getElementById("message").textContent = "Te rog să introduci un răspuns valid.";
+        displayMessage("Te rog să introduci un număr.", "error");
         return;
     }
+
     attempts++; // Incrementăm numărul de încercări
 
     if (userAnswer === correctAnswer) {
@@ -82,7 +84,7 @@ function checkAnswer() {
         incrementExercisesSolvedInChallenge();
         document.getElementById("exerciseCount").textContent = exerciseCount;
         updateNumbersUsed(document.getElementById("exercise").textContent);
-        document.getElementById("message").textContent = "Corect! Felicitări.";
+        displayRandomMessage(true);
         addExerciseToHistory(true); // Adaugă exercițiul cu indicarea că este corect
         checkAndDisplayBonus();
         generateExercise(); // Generează un nou exercițiu
@@ -91,12 +93,12 @@ function checkAnswer() {
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
     } else if (attempts < 2) {
         playErrorSound();
-        document.getElementById("message").textContent = "Incorect. Mai încearcă!";
+        displayRandomMessage(false);
         document.getElementById("answer").placeholder = userAnswer; // Setează răspunsul greșit ca placeholder
         document.getElementById("answer").value = ''; // Golește câmpul de input pentru o nouă încercare
     } else {
         playErrorSound();
-        document.getElementById("message").textContent = "Incorect. Vei avea mai mult succes data viitoare!";
+        displayMessage("Incorect. Vei avea mai mult succes data viitoare!", 'error');
         addExerciseToHistory(false); // Adaugă exercițiul cu indicarea că este incorect
         consecutiveCorrect = 0; // Resetează contorul pentru corecte consecutive
         generateExercise(); // Generează un nou exercițiu
@@ -106,6 +108,64 @@ function checkAnswer() {
     }
     saveToLocalStorage(); // Salvăm starea curentă după fiecare răspuns verificat
 }
+
+let messageTimeout;
+const successMessages = [
+    "Excelent!",
+    "Corect! Felicitări.",
+    "Bravo! Ai răspuns corect.",
+    "Perfect! Continuă așa.",
+    "Foarte bine!",
+    "Răspuns corect! Ești un geniu.",
+    "Exact ceea ce ne așteptam!",
+    "Extraordinar, exact așa este!",
+    "Super! Ai găsit răspunsul corect.",
+    "Incredibil! Răspuns corect."
+];
+
+const errorMessages = [
+    "Oops! Încearcă din nou.",
+    "Aproape, dar nu chiar. Mai încearcă!",
+    "Greșit. Fii atent la detalii.",
+    "Nu e corect. Poți mai bine.",
+    "Continuă să încerci!",
+    "Nu e răspunsul corect, dar nu renunța.",
+    "Eroare. Gândește-te mai bine.",
+    "Răspuns greșit, dar nu te descuraja.",
+    "Mai încearcă! Ești aproape de răspunsul corect.",
+    "Nu e corect, dar efortul contează."
+];
+
+function getRandomMessage(messages) {
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
+}
+function displayRandomMessage(isCorrect) {
+    const message = isCorrect ? getRandomMessage(successMessages) : getRandomMessage(errorMessages);
+    const messageType = isCorrect ? "success" : "error";
+    displayMessage(message, messageType);
+}
+function displayMessage(message, type) {
+    const messageElement = document.getElementById("message");
+    clearTimeout(messageTimeout); // Anulează orice temporizator anterior
+
+    // Setăm mesajul și clasificăm tipul de mesaj
+    messageElement.textContent = message;
+    messageElement.className = type === "error" ? "errorMessage" : "successMessage";
+    messageElement.style.opacity = 1; // Asigură că mesajul este vizibil
+    messageElement.style.animation = 'none'; // Întrerupe și resetează animația
+
+    // Asigură-te că resetarea și repornirea animației sunt aplicate
+    setTimeout(() => {
+        messageElement.style.animation = ''; // Resetează animația
+    }, 10); // O mică întârziere este necesară pentru a asigura resetarea animației
+
+    // Setează un nou temporizator pentru a gestiona dispariția treptată
+    messageTimeout = setTimeout(() => {
+        messageElement.style.opacity = 0; // Inițiază dispariția treptată
+    }, 10000); // Începe efectul de dispariție după 4 secunde
+}
+
 
 function checkAndDisplayBonus() {
     // Presupunând că avem 10 exerciții pentru adunare și scădere și 20 pentru aventurierNumeric
@@ -253,6 +313,7 @@ function incrementExercisesSolvedInChallenge() {
 }
 
 function saveToLocalStorage() {
+    soundEnabled = document.getElementById('soundToggleButton').getAttribute('data-enabled') === 'true';
     const appData = {
         soundEnabled,
         bonusTracker,
@@ -278,14 +339,9 @@ function loadFromLocalStorage() {
     document.getElementById('minNumberInput').value = minNumber;
     document.getElementById('maxNumberInput').value = maxNumber;
 
-    const savedSoundEnabled = localStorage.getItem('soundEnabled');
-    if (savedSoundEnabled !== null) { // Verifică dacă valoarea există în localStorage
-        soundEnabled = savedSoundEnabled === 'true'; // Convertirea șirului de caractere în boolean
-        const soundButton = document.getElementById("soundToggleButton");
-        soundButton.classList.toggle('soundOn', soundEnabled);
-        soundButton.classList.toggle('soundOff', !soundEnabled);
-        soundButton.textContent = soundEnabled ? 'Cu sunet' : 'Fără sunet';
-    }
+    soundEnabled = localStorage.getItem('soundEnabled') === 'true';
+    document.getElementById('soundToggleButton').setAttribute('data-enabled', soundEnabled.toString());
+    updateSoundButton();
 
     const appData = JSON.parse(localStorage.getItem('mathAppData')) || {};
     if (appData) {
@@ -324,11 +380,6 @@ function loadFromLocalStorage() {
         // Actualizează contorul exercițiilor
         document.getElementById("exerciseCount").textContent = exerciseCount;
 
-        const soundButton = document.getElementById("soundToggleButton");
-        soundButton.classList.toggle('soundOn', soundEnabled);
-        soundButton.classList.toggle('soundOff', !soundEnabled);
-        soundButton.textContent = soundEnabled ? 'Cu sunet' : 'Fără sunet';
-
         updateProgress('Adunare', bonusTracker.adunare); // pentru adunare
         updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
         updateProgress('Numere', numbersUsed.size); // pentru numere utilizate
@@ -362,16 +413,12 @@ function loadFromLocalStorage() {
 }
 
 function updateSoundButton() {
-    const soundButton = document.getElementById('soundToggleButton');
-    if (soundEnabled) {
-        soundButton.classList.remove('soundOff');
-        soundButton.classList.add('soundOn');
-        soundButton.textContent = 'Cu sunet';
-    } else {
-        soundButton.classList.remove('soundOn');
-        soundButton.classList.add('soundOff');
-        soundButton.textContent = 'Fără sunet';
-    }
+    const button = document.getElementById('soundToggleButton');
+    // Citim starea sunetului ca string și o convertim în boolean
+    soundEnabled = button.getAttribute('data-enabled') === 'true';
+    button.classList.toggle('soundOn', soundEnabled);
+    button.classList.toggle('soundOff', !soundEnabled);
+    button.textContent = soundEnabled ? 'Cu sunet' : 'Fără sunet';
 }
 
 function updateProgressMax() {
@@ -381,10 +428,9 @@ function updateProgressMax() {
     }
 }
 
-// Apelăm funcția la încărcarea paginii pentru a începe prima provocare
-document.addEventListener("DOMContentLoaded", startSpeedChallenge);
-document.getElementById("answer").addEventListener("keyup", function (event) {
+document.getElementById('answer').addEventListener('keypress', function(event) {
     if (event.key === "Enter") {
+        event.preventDefault();
         checkAnswer();
     }
 });
@@ -402,7 +448,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Listener pentru butonul de sunet
     document.getElementById('soundToggleButton').addEventListener('click', function () {
-        soundEnabled = !soundEnabled; // Comutăm starea sunetului
+        // Comutăm starea sunetului bazându-ne pe atributul data-enabled actual, convertit în boolean
+        soundEnabled = this.getAttribute('data-enabled') !== 'true';
+        this.setAttribute('data-enabled', soundEnabled.toString()); // Salvăm ca string
+        localStorage.setItem('soundEnabled', soundEnabled);
         saveToLocalStorage(); // Salvăm noua stare a sunetului în localStorage
         updateSoundButton(); // Actualizăm aspectul butonului de sunet
     });
