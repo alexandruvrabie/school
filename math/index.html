@@ -29,15 +29,18 @@
 <div class="container">
     <h2>Matematică: adunarea și scăderea</h2>
     <div id="rangeSettings">
-        <label for="minNumberInput">De la:</label>
-        <input type="number" id="minNumberInput" value="1">
-        <label for="maxNumberInput">Pina la:</label>
-        <input type="number" id="maxNumberInput" value="20">
-        <button onclick="updateRange()">Actualizează</button>
+        <label for="maxNumberSelect">Alegeți numărul maxim:</label>
+        <select id="maxNumberSelect">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
     </div>
     <div id="controlsContainer">
         <button id="soundToggleButton" class="soundButton soundOff">Fără sunet</button>
-        <button id="resetButton" class="resetButton">Resetează</button>
+        <button id="resetButton" class="resetButton">Resetează pagina</button>
     </div>
     <div id="exerciseContainer">
         <span id="exercise"></span>

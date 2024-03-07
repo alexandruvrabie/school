@@ -22,21 +22,22 @@ let minNumber = 1;
 let maxNumber = 20;
 
 function generateExercise() {
-    let num1 = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-    let num2 = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-    let exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
-    if (exerciseType === "subtraction") {
-        if (num1 < num2) {
-            [num1, num2] = [num2, num1]; // Asigură că num1 este mereu mai mare sau egal cu num2
-        }
-        correctAnswer = num1 - num2;
-    } else {
-        correctAnswer = num1 + num2;
-        if (correctAnswer > maxNumber) { // Regenerare numere dacă suma depășește maxNumber
-            generateExercise();
-            return;
-        }
+    let num1, num2, exerciseType;
+    exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
+
+    if (exerciseType === "addition") {
+        // Pentru adunare, asigură că num1 este între 1 și maxNumber - 1
+        num1 = Math.floor(Math.random() * (maxNumber - 1)) + 1;
+        // Asigură că suma num1 și num2 nu va depăși maxNumber
+        let maxForNum2 = maxNumber - num1; // Calculează valoarea maximă permisă pentru num2 bazată pe num1
+        num2 = Math.floor(Math.random() * (maxForNum2)) + 1;
+    } else { // subtraction
+        // Pentru scădere, este acceptabil ca num1 să fie maxNumber, deoarece nu există riscul de a depăși maxNumber prin scădere
+        num1 = Math.floor(Math.random() * maxNumber) + 1;
+        num2 = Math.floor(Math.random() * num1) + 1; // Alege al doilea număr astfel încât să nu fie mai mare decât primul număr
     }
+
+    correctAnswer = exerciseType === "addition" ? num1 + num2 : num1 - num2;
     document.getElementById("exercise").innerHTML = `${num1} ${exerciseType === "addition" ? "+" : "-"} ${num2} = `;
     document.getElementById("answer").value = '';
     document.getElementById("answer").classList.remove("incorrect");
@@ -47,12 +48,11 @@ function generateExercise() {
 
 function updateRange() {
     // Actualizează valorile minime și maxime bazate pe inputul utilizatorului
-    minNumber = parseInt(document.getElementById('minNumberInput').value, 10) || minNumber;
-    maxNumber = parseInt(document.getElementById('maxNumberInput').value, 10) || maxNumber;
+    maxNumber = parseInt(document.getElementById('maxNumberSelect').value, 10) || maxNumber;
+
 
     // Resetează localStorage și salvează doar valorile min și max
     localStorage.clear();
-    localStorage.setItem('minNumber', minNumber);
     localStorage.setItem('maxNumber', maxNumber);
     localStorage.setItem('soundEnabled', soundEnabled);
 
@@ -61,8 +61,7 @@ function updateRange() {
 }
 
 // Adăugați listeneri pentru inputuri pentru a actualiza intervalul la schimbare
-document.getElementById('minNumberInput').addEventListener('change', updateRange);
-document.getElementById('maxNumberInput').addEventListener('change', updateRange);
+document.getElementById('maxNumberSelect').addEventListener('change', updateRange);
 
 function checkAnswer() {
     const userAnswer = parseInt(document.getElementById("answer").value, 10);
@@ -324,20 +323,16 @@ function saveToLocalStorage() {
         exercisesSolvedInChallenge,
         bonusStatus,
         exercisesHistory,
-        minNumber,
         maxNumber
     };
     localStorage.setItem('mathAppData', JSON.stringify(appData));
 }
 
 function loadFromLocalStorage() {
-    const savedMinNumber = localStorage.getItem('minNumber');
     const savedMaxNumber = localStorage.getItem('maxNumber');
-    if (savedMinNumber !== null) minNumber = parseInt(savedMinNumber, 10);
     if (savedMaxNumber !== null) maxNumber = parseInt(savedMaxNumber, 10);
 
-    document.getElementById('minNumberInput').value = minNumber;
-    document.getElementById('maxNumberInput').value = maxNumber;
+    document.getElementById('maxNumberSelect').value = maxNumber;
 
     soundEnabled = localStorage.getItem('soundEnabled') === 'true';
     document.getElementById('soundToggleButton').setAttribute('data-enabled', soundEnabled.toString());
