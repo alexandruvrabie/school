@@ -20,7 +20,13 @@ const historyContainer = document.getElementById("exerciseList");
 let soundEnabled = false;
 let minNumber = 1;
 let maxNumber = 20;
-
+let bonusCounters = {
+    adunare: 0,
+    scadere: 0,
+    numere: 0,
+    precizie: 0,
+    viteza: 0
+};
 function generateExercise() {
     let num1, num2, exerciseType;
     exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
@@ -88,7 +94,6 @@ function checkAnswer() {
         checkAndDisplayBonus();
         generateExercise(); // Generează un nou exercițiu
         correctConsecutive++;
-        updateProgress('Precizie', correctConsecutive);
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
     } else if (attempts < 2) {
         playErrorSound();
@@ -174,10 +179,12 @@ function checkAndDisplayBonus() {
     updateProgress('Adunare', bonusTracker.adunare); // pentru adunare
     updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
     updateProgress('Numere', numbersUsed.size); // pentru numere utilizate
+    updateProgress('Precizie', correctConsecutive);
 
     // Maestru al Preciziei
     if (correctConsecutive >= 20) {
         bonusStatus.precizie = true;
+        bonusCounters.precizie++;
         createFallingEffect();
         document.getElementById("bonusPrecizie").style.opacity = 1;
         correctConsecutive = 0; // Resetează contorul după ce bonusul este acordat
@@ -185,20 +192,32 @@ function checkAndDisplayBonus() {
     // Resetarea tracker-ului la completarea bonusului
     if (bonusTracker.adunare >= maxAdunare) {
         bonusStatus.adunare = true;
+        bonusCounters.adunare++;
         createFallingEffect();
         bonusTracker.adunare = 0;
     }
     if (bonusTracker.scadere >= maxScadere) {
         bonusStatus.scadere = true;
+        bonusCounters.scadere++;
         createFallingEffect();
         bonusTracker.scadere = 0;
     }
     if (numbersUsed.size >= maxNumber) {
         bonusStatus.numere = true;
+        bonusCounters.numere++;
         createFallingEffect();
         numbersUsed.clear();
     }
     saveToLocalStorage(); // Salvăm starea curentă după verificarea bonusurilor
+    updateUIForCounters();
+}
+
+function updateUIForCounters() {
+    document.getElementById("counterAdunare").textContent = bonusCounters.adunare;
+    document.getElementById("counterScadere").textContent = bonusCounters.scadere;
+    document.getElementById("counterNumere").textContent = bonusCounters.numere;
+    document.getElementById("counterPrecizie").textContent = bonusCounters.precizie;
+    document.getElementById("counterViteza").textContent = bonusCounters.viteza;
 }
 
 function addExerciseToHistory(isCorrect) {
@@ -301,6 +320,7 @@ function incrementExercisesSolvedInChallenge() {
         document.getElementById("bonusViteza").style.opacity = 1;
 
         bonusStatus.viteza = true;
+        bonusCounters.viteza++;
         applyGlowEffect('bonusViteza');
         createFallingEffect();
 
@@ -323,7 +343,8 @@ function saveToLocalStorage() {
         exercisesSolvedInChallenge,
         bonusStatus,
         exercisesHistory,
-        maxNumber
+        maxNumber,
+        bonusCounters
     };
     localStorage.setItem('mathAppData', JSON.stringify(appData));
 }
@@ -354,7 +375,17 @@ function loadFromLocalStorage() {
             precizie: false,
             viteza: false
         };
+        bonusCounters = appData.bonusCounters || {
+            adunare: 0,
+            scadere: 0,
+            numere: 0,
+            precizie: 0,
+            viteza: 0
+        };
         exercisesHistory = appData.exercisesHistory || []; // Încarcă istoricul sau inițializează-l ca listă goală
+
+        // Actualizarea UI-ului pentru a reflecta valorile contoarelor
+        updateUIForCounters();
 
         // Restaurează UI-ul bazat pe bonusStatus
         Object.keys(bonusStatus).forEach(key => {

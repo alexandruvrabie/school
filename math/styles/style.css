@@ -97,7 +97,7 @@ button:hover {
     background-color: #76EEC6;
 }
 
-#message, #bonusContainer {
+#message {
     color: #FF4500;
     font-size: 2rem;
     margin: 20px 0;
@@ -136,18 +136,36 @@ button:hover {
 
 #bonusContainer {
     display: flex;
-    flex-wrap: wrap; /* Permite elementelor să treacă pe rândul următor dacă nu există spațiu suficient */
+    flex-wrap: wrap; /* Permite elementelor să treacă pe un nou rând */
     justify-content: center; /* Centrează elementele pe rând */
     gap: 20px; /* Spațiu între elementele de bonus */
 }
 
 .bonusItem {
-    text-align: center; /* Alinează textul și imaginile din fiecare bonusItem */
+    border: 1px solid #ccc; /* Adaugă o bordură subtilă */
+    padding: 20px; /* Spațiu în interiorul fiecărui element de bonus */
+    margin-bottom: 20px; /* Spațiu între elementele de bonus */
+    border-radius: 10px; /* Margini rotunjite */
+    background-color: #f9f9f9; /* Un fundal ușor diferit pentru a se distinge */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* O umbră subtilă pentru efectul de adâncime */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrează conținutul pe verticală */
+    text-align: center; /* Alinează textul la centru */
+    flex: 0 1 calc(25% - 20px); /* Calculează flex-basis pentru 4 elemente per rând minus gap */
 }
 
 .bonusTitle {
-    font-size: 1rem;
-    margin-bottom: 10px; /* Spațiu între titlu și imagine */
+    font-size: 1.2em; /* Mărește ușor fontul titlului */
+    margin-bottom: 10px; /* Spațiu între titlu și conținutul următor */
+    font-weight: bold; /* Face titlul mai proeminent */
+    color: #333; /* O culoare mai închisă pentru contrast */
+}
+
+.counterContainer {
+    margin: 10px 0; /* Spațiu înainte și după contor */
+    font-size: 0.9em; /* O dimensiune mai mică a fontului pentru contor */
+    color: #666; /* O culoare mai deschisă pentru textul contorului */
 }
 
 .bonusImage {
@@ -159,8 +177,9 @@ button:hover {
 }
 
 .bonusProgress {
-    width: 100px; /* Lățimea corespunde cu cea a imaginii bonus */
-    height: 20px; /* Înălțimea barei de progres */
+    width: 100%; /* Lățime completă pentru a se potrivi cu containerul */
+    height: 20px; /* Înălțimea specifică pentru bara de progres */
+    margin: 10px 0; /* Spațiu înainte și după bara de progres */
 }
 
 #controlsContainer {
@@ -218,6 +237,17 @@ button:hover {
     .bonusImage {
         width: 150px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
         height: auto;
+    }
+}
+@media (max-width: 768px) {
+    .bonusItem {
+        flex: 0 1 calc(50% - 20px); /* Ajustează pentru 2 elemente per rând pe ecrane mai mici */
+    }
+}
+
+@media (max-width: 480px) {
+    .bonusItem {
+        flex: 0 1 100%; /* Ocupă întreaga lățime pentru ecrane foarte mici */
     }
 }
 
