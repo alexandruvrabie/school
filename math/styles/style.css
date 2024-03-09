@@ -36,7 +36,6 @@ body {
     margin-bottom: 10px; /* Spațiu dedesubt pentru separare */
     transition: background-color 0.3s ease; /* Tranziție pentru feedback vizual la hover */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Umbră ușoară pentru a adăuga adâncime */
-    font-family: 'Comic Sans MS', cursive, sans-serif; /* Menține fontul prietenos pentru copii */
 }
 
 #toggleSettingsButton:hover {
