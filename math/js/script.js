@@ -28,11 +28,19 @@ let bonusCounters = {
     viteza: 0
 };
 let lastProblems = []; // Va stoca ultimele probleme generate sub forma de string-uri
+let operationType = 'all'
 
 function generateExercise() {
     let num1, num2, exerciseType, problemString;
+    const operationType = localStorage.getItem('operationType') || 'all'; // Citește tipul de operație din localStorage sau folosește 'all' ca valoare implicită
+
     do {
-        exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
+        // Ajustează selecția tipului de exercițiu bazat pe selecția utilizatorului
+        if (operationType === 'all') {
+            exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
+        } else {
+            exerciseType = operationType; // 'addition' sau 'subtraction', conform selecției
+        }
 
         if (exerciseType === "addition") {
             num1 = Math.floor(Math.random() * (maxNumber - 1)) + 1;
@@ -64,11 +72,13 @@ function generateExercise() {
 function updateRange() {
     // Actualizează valorile minime și maxime bazate pe inputul utilizatorului
     maxNumber = parseInt(document.getElementById('maxNumberSelect').value, 10) || maxNumber;
+    operationType = document.getElementById('operationTypeSelect').value || operationType;
 
 
     // Resetează localStorage și salvează doar valorile min și max
     localStorage.clear();
     localStorage.setItem('maxNumber', maxNumber);
+    localStorage.setItem('operationType', operationType);
     localStorage.setItem('soundEnabled', soundEnabled);
 
     // Reîncărcăm pagina pentru a aplica schimbările
@@ -77,6 +87,7 @@ function updateRange() {
 
 // Adăugați listeneri pentru inputuri pentru a actualiza intervalul la schimbare
 document.getElementById('maxNumberSelect').addEventListener('change', updateRange);
+document.getElementById('operationTypeSelect').addEventListener('change', updateRange);
 
 function checkAnswer() {
     const userAnswer = parseInt(document.getElementById("answer").value, 10);
@@ -359,7 +370,8 @@ function saveToLocalStorage() {
         bonusStatus,
         exercisesHistory,
         maxNumber,
-        bonusCounters
+        bonusCounters,
+        operationType
     };
     localStorage.setItem('mathAppData', JSON.stringify(appData));
 }
@@ -369,6 +381,11 @@ function loadFromLocalStorage() {
     if (savedMaxNumber !== null) maxNumber = parseInt(savedMaxNumber, 10);
 
     document.getElementById('maxNumberSelect').value = maxNumber;
+
+    const savedOperationType = localStorage.getItem('operationType');
+    if (savedOperationType !== null) operationType = savedOperationType;
+
+    document.getElementById('operationTypeSelect').value = operationType;
 
     soundEnabled = localStorage.getItem('soundEnabled') ?? soundEnabled;
     document.getElementById('soundToggleButton').setAttribute('data-enabled', soundEnabled.toString());

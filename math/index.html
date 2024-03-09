@@ -32,14 +32,25 @@
 
     <div id="settingsContainer" style="display: none;">
         <div id="rangeSettings">
-            <label for="maxNumberSelect">Alegeți numărul maxim:</label>
-            <select id="maxNumberSelect">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
+            <div class="setting-group">
+                <label for="maxNumberSelect">Alegeți numărul maxim:</label>
+                <select id="maxNumberSelect">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label for="operationTypeSelect">Alegeți tipul de operații:</label>
+                <select id="operationTypeSelect">
+                    <option value="all">Ambele operații</option>
+                    <option value="addition">Doar adunare</option>
+                    <option value="subtraction">Doar scădere</option>
+                </select>
+            </div>
         </div>
         <div id="controlsContainer">
             <button id="soundToggleButton" class="soundButton soundOn" data-enabled="true">Cu sunet</button>

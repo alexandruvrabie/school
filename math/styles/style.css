@@ -45,10 +45,17 @@ body {
 
 #rangeSettings {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
     font-size: 1rem;
+}
+
+#rangeSettings > div {
+    width: 100%; /* Asigură că fiecare grup de label și select ocupă întreaga lățime */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 #rangeSettings input[type="number"] {
@@ -71,6 +78,36 @@ body {
 #rangeSettings button:hover {
     background-color: #45a049;
 }
+
+/* Stilizare suplimentară pentru label și select, adaptată la CSS-ul existent */
+label {
+    font-size: 1.5rem; /* Ajustează dimensiunea fontului pentru o mai bună vizibilitate */
+    color: #333; /* Menține culoarea textului coerență cu restul aplicației */
+    margin: 20px 0 0; /* Spațiu suplimentar deasupra și dedesubtul etichetei */
+    font-family: 'Comic Sans MS', 'Arial', sans-serif; /* Menține fontul prietenos pentru copii */
+}
+
+#rangeSettings select {
+    font-size: 1.5rem; /* Mărește dimensiunea fontului pentru ușurință în selectare */
+    color: #333; /* Culoare text coerență cu schema de culori */
+    padding: 10px 20px; /* Padding generos pentru ușurință în manipulare */
+    border-radius: 10px; /* Margini rotunjite pentru un aspect mai prietenos */
+    border: 2px solid #4CAF50; /* Bordură colorată pentru a se potrivi cu butoanele */
+    background-color: #FFF; /* Fundal deschis pentru contrast bun */
+    cursor: pointer; /* Indică faptul că elementul este interactiv */
+    outline-color: #FFD700; /* Culoare de accent pentru focus, pentru o mai bună vizibilitate */
+}
+
+#rangeSettings select:hover {
+    background-color: #F0F8FF; /* Schimbă ușor culoarea de fundal la hover */
+    border-color: #76EEC6; /* Schimbă culoarea bordurii la hover */
+}
+
+#rangeSettings select:focus {
+    border-color: #FFD700; /* Culoarea bordurii la focus */
+    box-shadow: 0 0 0 2px #FFD700; /* Adaugă o umbră pentru a evidenția focusul */
+}
+
 #bonusContainer, #exerciseContainer, #exerciseList {
     width: 90%; /* Ajustează la 90% din lățimea containerului pentru a permite un spațiu pe margini */
     max-width: 600px; /* Poți ajusta această valoare în funcție de design-ul dorit */
@@ -290,35 +327,6 @@ button:hover {
 
 .glowEffect {
     animation: glowAnimation 1s ease-in-out infinite; /* Animatie mai rapidă și repetitivă */
-}
-
-/* Stilizare suplimentară pentru label și select, adaptată la CSS-ul existent */
-label {
-    font-size: 1.5rem; /* Ajustează dimensiunea fontului pentru o mai bună vizibilitate */
-    color: #333; /* Menține culoarea textului coerență cu restul aplicației */
-    margin: 20px 0 0; /* Spațiu suplimentar deasupra și dedesubtul etichetei */
-    font-family: 'Comic Sans MS', 'Arial', sans-serif; /* Menține fontul prietenos pentru copii */
-}
-
-select#maxNumberSelect {
-    font-size: 1.5rem; /* Mărește dimensiunea fontului pentru ușurință în selectare */
-    color: #333; /* Culoare text coerență cu schema de culori */
-    padding: 10px 20px; /* Padding generos pentru ușurință în manipulare */
-    border-radius: 10px; /* Margini rotunjite pentru un aspect mai prietenos */
-    border: 2px solid #4CAF50; /* Bordură colorată pentru a se potrivi cu butoanele */
-    background-color: #FFF; /* Fundal deschis pentru contrast bun */
-    cursor: pointer; /* Indică faptul că elementul este interactiv */
-    outline-color: #FFD700; /* Culoare de accent pentru focus, pentru o mai bună vizibilitate */
-}
-
-select#maxNumberSelect:hover {
-    background-color: #F0F8FF; /* Schimbă ușor culoarea de fundal la hover */
-    border-color: #76EEC6; /* Schimbă culoarea bordurii la hover */
-}
-
-select#maxNumberSelect:focus {
-    border-color: #FFD700; /* Culoarea bordurii la focus */
-    box-shadow: 0 0 0 2px #FFD700; /* Adaugă o umbră pentru a evidenția focusul */
 }
 
 #bonusCompletedPopup {
