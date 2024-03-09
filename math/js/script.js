@@ -29,9 +29,11 @@ let bonusCounters = {
 };
 let lastProblems = []; // Va stoca ultimele probleme generate sub forma de string-uri
 let operationType = 'all'
+let lastResults = []; // Inițializează o nouă listă pentru a urmări ultimele rezultate
+const historyLimit = 3; // Numărul de rezultate unice pe care dorim să le urmărim
 
 function generateExercise() {
-    let num1, num2, exerciseType, problemString;
+    let num1, num2, exerciseType, problemString, newResult;
     const operationType = localStorage.getItem('operationType') || 'all'; // Citește tipul de operație din localStorage sau folosește 'all' ca valoare implicită
 
     do {
@@ -51,10 +53,11 @@ function generateExercise() {
             num2 = Math.floor(Math.random() * num1) + 1;
         }
 
+        newResult = exerciseType === "addition" ? num1 + num2 : num1 - num2;
         problemString = `${num1} ${exerciseType === "addition" ? "+" : "-"} ${num2}`;
-    } while (lastProblems.includes(problemString)); // Verifică dacă problema a fost generată în ultimele 3 iterații
+    } while (lastProblems.includes(problemString) || lastResults.includes(newResult)); // Verifică dacă rezultatul a fost generat în ultimele 3 iterații
 
-    correctAnswer = exerciseType === "addition" ? num1 + num2 : num1 - num2;
+    correctAnswer = newResult;
     document.getElementById("exercise").innerHTML = problemString + " = ";
     document.getElementById("answer").value = '';
     document.getElementById("answer").classList.remove("incorrect");
@@ -62,10 +65,10 @@ function generateExercise() {
     document.getElementById("answer").focus();
     attempts = 0; // Resetăm încercările pentru noul exercițiu
 
-    // Actualizează istoricul problemelor, menținând doar ultimele 3 probleme
-    lastProblems.push(problemString);
-    if (lastProblems.length > 3) {
-        lastProblems.shift(); // Elimină cea mai veche problemă din istoric
+    // Actualizează istoricul rezultatelor, menținând doar ultimele 3 rezultate unice
+    lastResults.push(newResult);
+    if (lastResults.length > historyLimit) {
+        lastResults.shift(); // Elimină cel mai vechi rezultat din istoric
     }
 }
 
