@@ -279,7 +279,8 @@ button:hover {
 
 @media (max-width: 480px) {
     .bonusItem {
-        flex: 0 1 33%; /* Ocupă întreaga lățime pentru ecrane foarte mici */
+        flex: 0 1 30%; /* Ocupă întreaga lățime pentru ecrane foarte mici */
+        padding: 5px;
     }
 }
 
