@@ -27,29 +27,38 @@ let bonusCounters = {
     precizie: 0,
     viteza: 0
 };
-function generateExercise() {
-    let num1, num2, exerciseType;
-    exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
+let lastProblems = []; // Va stoca ultimele probleme generate sub forma de string-uri
 
-    if (exerciseType === "addition") {
-        // Pentru adunare, asigură că num1 este între 1 și maxNumber - 1
-        num1 = Math.floor(Math.random() * (maxNumber - 1)) + 1;
-        // Asigură că suma num1 și num2 nu va depăși maxNumber
-        let maxForNum2 = maxNumber - num1; // Calculează valoarea maximă permisă pentru num2 bazată pe num1
-        num2 = Math.floor(Math.random() * (maxForNum2)) + 1;
-    } else { // subtraction
-        // Pentru scădere, este acceptabil ca num1 să fie maxNumber, deoarece nu există riscul de a depăși maxNumber prin scădere
-        num1 = Math.floor(Math.random() * maxNumber) + 1;
-        num2 = Math.floor(Math.random() * num1) + 1; // Alege al doilea număr astfel încât să nu fie mai mare decât primul număr
-    }
+function generateExercise() {
+    let num1, num2, exerciseType, problemString;
+    do {
+        exerciseType = Math.random() > 0.5 ? "addition" : "subtraction";
+
+        if (exerciseType === "addition") {
+            num1 = Math.floor(Math.random() * (maxNumber - 1)) + 1;
+            let maxForNum2 = maxNumber - num1;
+            num2 = Math.floor(Math.random() * (maxForNum2)) + 1;
+        } else { // subtraction
+            num1 = Math.floor(Math.random() * maxNumber) + 1;
+            num2 = Math.floor(Math.random() * num1) + 1;
+        }
+
+        problemString = `${num1} ${exerciseType === "addition" ? "+" : "-"} ${num2}`;
+    } while (lastProblems.includes(problemString)); // Verifică dacă problema a fost generată în ultimele 3 iterații
 
     correctAnswer = exerciseType === "addition" ? num1 + num2 : num1 - num2;
-    document.getElementById("exercise").innerHTML = `${num1} ${exerciseType === "addition" ? "+" : "-"} ${num2} = `;
+    document.getElementById("exercise").innerHTML = problemString + " = ";
     document.getElementById("answer").value = '';
     document.getElementById("answer").classList.remove("incorrect");
     document.getElementById("answer").disabled = false;
     document.getElementById("answer").focus();
     attempts = 0; // Resetăm încercările pentru noul exercițiu
+
+    // Actualizează istoricul problemelor, menținând doar ultimele 3 probleme
+    lastProblems.push(problemString);
+    if (lastProblems.length > 3) {
+        lastProblems.shift(); // Elimină cea mai veche problemă din istoric
+    }
 }
 
 function updateRange() {
