@@ -1,6 +1,13 @@
 let correctAnswer; // Răspunsul corect al exercițiului curent
 let attempts = 0; // Numărul de încercări pentru exercițiul curent
-let bonusTracker = {adunare: 0, scadere: 0}; // Urmărește progresul pentru bonusuri specifice
+let bonusTracker = {
+    adunare: 0,
+    scadere: 0,
+    numere: 0,
+    precizie: 0,
+    viteza: 0,
+    persistenta: 0
+}; // Urmărește progresul pentru bonusuri specifice
 let numbersUsed = new Set(); // Pentru a urmări numerele utilizate în exerciții
 let exerciseCount = 0;
 let consecutiveCorrect = 0; // Contor pentru exerciții rezolvate corect consecutiv
@@ -13,7 +20,8 @@ let bonusStatus = {
     scadere: false,
     numere: false,
     precizie: false,
-    viteza: false
+    viteza: false,
+    persitenta: false
 };
 let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
 const historyContainer = document.getElementById("exerciseList");
@@ -25,7 +33,8 @@ let bonusCounters = {
     scadere: 0,
     numere: 0,
     precizie: 0,
-    viteza: 0
+    viteza: 0,
+    persitenta: 0
 };
 let lastProblems = []; // Va stoca ultimele probleme generate sub forma de string-uri
 let operationType = 'all'
@@ -107,6 +116,7 @@ function checkAnswer() {
 
     if (userAnswer === correctAnswer) {
         bonusTracker[exerciseType]++;
+        bonusTracker.persistenta++;
         consecutiveCorrect++;
         exerciseCount++;
         incrementExercisesSolvedInChallenge();
@@ -114,10 +124,10 @@ function checkAnswer() {
         updateNumbersUsed(document.getElementById("exercise").textContent);
         displayRandomMessage(true);
         addExerciseToHistory(true); // Adaugă exercițiul cu indicarea că este corect
-        checkAndDisplayBonus();
-        generateExercise(); // Generează un nou exercițiu
         correctConsecutive++;
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
+        checkAndDisplayBonus();
+        generateExercise(); // Generează un nou exercițiu
     } else if (attempts < 2) {
         playErrorSound();
         displayRandomMessage(false);
@@ -203,6 +213,7 @@ function checkAndDisplayBonus() {
     updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
     updateProgress('Numere', numbersUsed.size); // pentru numere utilizate
     updateProgress('Precizie', correctConsecutive);
+    updateProgress('Persistenta', bonusTracker.persistenta);
 
     // Maestru al Preciziei
     if (correctConsecutive >= 20) {
@@ -228,6 +239,13 @@ function checkAndDisplayBonus() {
         showBonusCompletedPopup('Virtuozul Scăderii', 'images/virtuozul-scaderii.webp');
         bonusTracker.scadere = 0;
     }
+    if (bonusTracker.persistenta >= 500) {
+        bonusStatus.persistenta = true;
+        bonusCounters.persitenta++;
+        createFallingEffect();
+        showBonusCompletedPopup('Persistență absolută', 'images/persistenta-absoluta.webp');
+        bonusTracker.persistenta = 0;
+    }
     if (numbersUsed.size >= maxNumber) {
         bonusStatus.numere = true;
         bonusCounters.numere++;
@@ -240,11 +258,12 @@ function checkAndDisplayBonus() {
 }
 
 function updateUIForCounters() {
-    document.getElementById("counterAdunare").textContent = bonusCounters.adunare;
-    document.getElementById("counterScadere").textContent = bonusCounters.scadere;
-    document.getElementById("counterNumere").textContent = bonusCounters.numere;
-    document.getElementById("counterPrecizie").textContent = bonusCounters.precizie;
-    document.getElementById("counterViteza").textContent = bonusCounters.viteza;
+    document.getElementById("counterAdunare").textContent = bonusCounters.adunare ?? 0;
+    document.getElementById("counterScadere").textContent = bonusCounters.scadere ?? 0;
+    document.getElementById("counterNumere").textContent = bonusCounters.numere ?? 0;
+    document.getElementById("counterPrecizie").textContent = bonusCounters.precizie ?? 0;
+    document.getElementById("counterViteza").textContent = bonusCounters.viteza ?? 0;
+    document.getElementById("counterPersistenta").textContent = bonusCounters.persitenta ?? 0;
 }
 
 function addExerciseToHistory(isCorrect) {
@@ -276,7 +295,7 @@ function updateProgress(bonusType, progress) {
     const progressId = `progress${bonusType.charAt(0).toUpperCase() + bonusType.slice(1)}`; // Construiește ID-ul bazei de progres
     const progressElement = document.getElementById(progressId);
     if (progressElement) {
-        progressElement.value = progress; // Actualizează progresul
+        progressElement.value = progress ?? 0; // Actualizează progresul
 
         // Verifică dacă progresul este complet și înlătură opacitatea
         if (progress >= progressElement.max) {
@@ -397,26 +416,14 @@ function loadFromLocalStorage() {
     const appData = JSON.parse(localStorage.getItem('mathAppData')) || {};
     if (appData) {
         // Restaurarea stării variabilelor
-        bonusTracker = appData?.bonusTracker ?? {adunare: 0, scadere: 0, numere: 0, precizie: 0, viteza: 0};
+        bonusTracker = appData?.bonusTracker ?? bonusTracker;
         numbersUsed = new Set(appData?.numbersUsed ?? []);
         exerciseCount = appData?.exerciseCount ?? 0;
         consecutiveCorrect = appData?.consecutiveCorrect ?? 0;
         correctConsecutive = appData?.correctConsecutive ?? 0;
         exercisesSolvedInChallenge = appData?.exercisesSolvedInChallenge ?? 0;
-        bonusStatus = appData.bonusStatus || {
-            adunare: false,
-            scadere: false,
-            numere: false,
-            precizie: false,
-            viteza: false
-        };
-        bonusCounters = appData.bonusCounters || {
-            adunare: 0,
-            scadere: 0,
-            numere: 0,
-            precizie: 0,
-            viteza: 0
-        };
+        bonusStatus = appData.bonusStatus || bonusStatus;
+        bonusCounters = appData.bonusCounters || bonusCounters;
         exercisesHistory = appData.exercisesHistory || []; // Încarcă istoricul sau inițializează-l ca listă goală
 
         // Actualizarea UI-ului pentru a reflecta valorile contoarelor
@@ -445,6 +452,7 @@ function loadFromLocalStorage() {
         updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
         updateProgress('Numere', numbersUsed.size); // pentru numere utilizate
         updateProgress('Precizie', correctConsecutive);
+        updateProgress('Persistenta', bonusTracker.persistenta);
 
         // Restaurează opacitatea elementelor bonus dacă progresele corespunzătoare au fost atinse
         if (bonusTracker.adunare >= 10) {
@@ -452,6 +460,9 @@ function loadFromLocalStorage() {
         }
         if (bonusTracker.scadere >= 10) {
             document.getElementById("bonusScadere").style.opacity = 1;
+        }
+        if (bonusTracker.persistenta >= 500) {
+            document.getElementById("bonusPersistenta").style.opacity = 1;
         }
         if (numbersUsed.size >= maxNumber) {
             document.getElementById("bonusNumere").style.opacity = 1;
