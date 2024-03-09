@@ -497,6 +497,17 @@ document.getElementById('answer').addEventListener('keypress', function(event) {
     }
 });
 
+document.getElementById("toggleSettingsButton").addEventListener("click", function() {
+    var settingsContainer = document.getElementById("settingsContainer");
+    if (settingsContainer.style.display === "none") {
+        settingsContainer.style.display = "block"; // Schimbă display-ul pentru a arăta setările
+        this.textContent = "Ascunde Setările"; // Actualizează textul butonului
+    } else {
+        settingsContainer.style.display = "none"; // Ascunde setările
+        this.textContent = "Arată Setările"; // Resetează textul butonului
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     loadFromLocalStorage();
     updateProgressMax();

@@ -12,6 +12,38 @@ body {
     align-items: center;
     width: 100%;
 }
+
+#settingsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    border: 2px solid #FFD700; /* Culoarea bordurii este setată la culoarea de fundal a exerciseContainer */
+    border-radius: 10px; /* Raza colțurilor este setată la aceeași valoare ca și pentru exerciseContainer */
+    padding: 20px; /* Adaugă padding pentru a avea un aspect mai aerisit */
+    background-color: #F0F8FF; /* Folosește o culoare de fundal deschisă, poți ajusta conform schemei tale de culori */
+}
+
+#toggleSettingsButton {
+    background-color: #FFD700; /* O culoare de fundal veselă și luminoasă */
+    color: #333; /* Culoare text care oferă un contrast bun */
+    border: 2px solid #FFA500; /* Bordură colorată pentru a adăuga la aspectul jucăuș */
+    padding: 8px 15px; /* Padding generos pentru ușurința în utilizare */
+    font-size: 1.2rem; /* Dimensiune font mărită pentru accesibilitate */
+    border-radius: 10px; /* Margini foarte rotunjite pentru un aspect prietenos */
+    cursor: pointer; /* Indică faptul că elementul este clicabil */
+    margin-bottom: 10px; /* Spațiu dedesubt pentru separare */
+    transition: background-color 0.3s ease; /* Tranziție pentru feedback vizual la hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Umbră ușoară pentru a adăuga adâncime */
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Menține fontul prietenos pentru copii */
+}
+
+#toggleSettingsButton:hover {
+    background-color: #FFC107; /* Schimbă culoarea de fundal la hover pentru a fi și mai luminos */
+    border-color: #FFD700; /* Schimbă culoarea bordurii pentru consistență */
+}
+
 #rangeSettings {
     display: flex;
     justify-content: center;

@@ -28,19 +28,23 @@
 
 <div class="container">
     <h2>Matematică: adunarea și scăderea</h2>
-    <div id="rangeSettings">
-        <label for="maxNumberSelect">Alegeți numărul maxim:</label>
-        <select id="maxNumberSelect">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-        </select>
-    </div>
-    <div id="controlsContainer">
-        <button id="soundToggleButton" class="soundButton soundOn" data-enabled="true">Cu sunet</button>
-        <button id="resetButton" class="resetButton">Resetează pagina</button>
+    <button id="toggleSettingsButton">Arată Setările</button>
+
+    <div id="settingsContainer" style="display: none;">
+        <div id="rangeSettings">
+            <label for="maxNumberSelect">Alegeți numărul maxim:</label>
+            <select id="maxNumberSelect">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+        <div id="controlsContainer">
+            <button id="soundToggleButton" class="soundButton soundOn" data-enabled="true">Cu sunet</button>
+            <button id="resetButton" class="resetButton">Resetează pagina</button>
+        </div>
     </div>
     <div id="exerciseContainer">
         <span id="exercise"></span>
