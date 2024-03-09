@@ -17,7 +17,7 @@ let bonusStatus = {
 };
 let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
 const historyContainer = document.getElementById("exerciseList");
-let soundEnabled = false;
+let soundEnabled = true;
 let minNumber = 1;
 let maxNumber = 20;
 let bonusCounters = {
@@ -361,7 +361,7 @@ function loadFromLocalStorage() {
 
     document.getElementById('maxNumberSelect').value = maxNumber;
 
-    soundEnabled = localStorage.getItem('soundEnabled') === 'true';
+    soundEnabled = localStorage.getItem('soundEnabled') ?? soundEnabled;
     document.getElementById('soundToggleButton').setAttribute('data-enabled', soundEnabled.toString());
     updateSoundButton();
 
