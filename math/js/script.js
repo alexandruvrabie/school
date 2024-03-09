@@ -186,6 +186,7 @@ function checkAndDisplayBonus() {
         bonusStatus.precizie = true;
         bonusCounters.precizie++;
         createFallingEffect();
+        showBonusCompletedPopup('Maestru al Preciziei', 'images/precision-master.webp');
         document.getElementById("bonusPrecizie").style.opacity = 1;
         correctConsecutive = 0; // Resetează contorul după ce bonusul este acordat
     }
@@ -194,18 +195,21 @@ function checkAndDisplayBonus() {
         bonusStatus.adunare = true;
         bonusCounters.adunare++;
         createFallingEffect();
+        showBonusCompletedPopup('Maestru Adunării', 'images/maestrul-adunarii.webp');
         bonusTracker.adunare = 0;
     }
     if (bonusTracker.scadere >= maxScadere) {
         bonusStatus.scadere = true;
         bonusCounters.scadere++;
         createFallingEffect();
+        showBonusCompletedPopup('Virtuozul Scăderii', 'images/virtuozul-scaderii.webp');
         bonusTracker.scadere = 0;
     }
     if (numbersUsed.size >= maxNumber) {
         bonusStatus.numere = true;
         bonusCounters.numere++;
         createFallingEffect();
+        showBonusCompletedPopup('Aventurier Numeric', 'images/aventurier-numeric.webp');
         numbersUsed.clear();
     }
     saveToLocalStorage(); // Salvăm starea curentă după verificarea bonusurilor
@@ -323,6 +327,8 @@ function incrementExercisesSolvedInChallenge() {
         bonusCounters.viteza++;
         applyGlowEffect('bonusViteza');
         createFallingEffect();
+        showBonusCompletedPopup('Viteza Luminii', 'images/speed-light.webp');
+
 
         // Opțional: Resetăm provocarea imediat sau lăsăm cronometrul să expire
         // Resetăm manual aici deoarece utilizatorul a completat provocarea
@@ -452,6 +458,27 @@ function updateProgressMax() {
     if (progressNumere) {
         progressNumere.max = maxNumber - minNumber + 1; // Presupunând că vrei toate numerele între minNumber și maxNumber
     }
+}
+
+function showBonusCompletedPopup(bonusName, bonusIconPath) {
+    // Crează elementul popup
+    const popup = document.createElement('div');
+    popup.id = 'bonusCompletedPopup';
+    popup.innerHTML = `
+        <img src="${bonusIconPath}" alt="${bonusName}" class="popupIcon">
+        <p>${bonusName} completat!</p>
+    `;
+    document.body.appendChild(popup);
+
+    // Afișează popup-ul și îl ascunde după 5 secunde
+    setTimeout(() => {
+        popup.style.opacity = 1; // Face popup-ul vizibil
+    }, 100);
+
+    setTimeout(() => {
+        popup.style.opacity = 0; // Ascunde popup-ul
+        setTimeout(() => document.body.removeChild(popup), 600); // Îl șterge după ce animația de opacitate s-a încheiat
+    }, 5000);
 }
 
 document.getElementById('answer').addEventListener('keypress', function(event) {

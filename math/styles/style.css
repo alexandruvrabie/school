@@ -231,11 +231,11 @@ button:hover {
     }
 
     #message, #bonusContainer {
-        font-size: 2.5rem; /* Mărește fonturile pentru mesaje și containerul de bonus */
+        font-size: 1rem; /* Mărește fonturile pentru mesaje și containerul de bonus */
     }
 
     .bonusImage {
-        width: 150px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
+        width: 130px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
         height: auto;
     }
 }
@@ -247,7 +247,7 @@ button:hover {
 
 @media (max-width: 480px) {
     .bonusItem {
-        flex: 0 1 100%; /* Ocupă întreaga lățime pentru ecrane foarte mici */
+        flex: 0 1 33%; /* Ocupă întreaga lățime pentru ecrane foarte mici */
     }
 }
 
@@ -265,7 +265,7 @@ label {
     font-size: 1.5rem; /* Ajustează dimensiunea fontului pentru o mai bună vizibilitate */
     color: #333; /* Menține culoarea textului coerență cu restul aplicației */
     margin: 20px 0 10px; /* Spațiu suplimentar deasupra și dedesubtul etichetei */
-    font-family: 'Comic Sans MS', cursive, sans-serif; /* Menține fontul prietenos pentru copii */
+    font-family: 'Comic Sans MS', 'Arial', sans-serif; /* Menține fontul prietenos pentru copii */
 }
 
 select#maxNumberSelect {
@@ -288,4 +288,26 @@ select#maxNumberSelect:hover {
 select#maxNumberSelect:focus {
     border-color: #FFD700; /* Culoarea bordurii la focus */
     box-shadow: 0 0 0 2px #FFD700; /* Adaugă o umbră pentru a evidenția focusul */
+}
+
+#bonusCompletedPopup {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.popupIcon {
+    width: 30px;
+    height: 30px;
 }
