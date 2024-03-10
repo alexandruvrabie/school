@@ -4,14 +4,15 @@ let bonusTracker = {
     adunare: 0,
     scadere: 0,
     numere: 0,
-    precizie: 0,
+    precizie: 0, // Pentru bonusul "Maestru al Preciziei"
     viteza: 0,
-    persistenta: 0
+    persistenta: 0,
+    lantulSuccesului: 0,
+    vartejulIntelepciunii: 0
+
 }; // Urmărește progresul pentru bonusuri specifice
 let numbersUsed = new Set(); // Pentru a urmări numerele utilizate în exerciții
 let exerciseCount = 0;
-let consecutiveCorrect = 0; // Contor pentru exerciții rezolvate corect consecutiv
-let correctConsecutive = 0; // Pentru bonusul "Maestru al Preciziei"
 let speedChallengeTimer; // Cronometru pentru provocarea de viteză
 let speedChallengeStart; // Timpul de start al provocării curente
 let exercisesSolvedInChallenge = 0; // Numărul de exerciții rezolvate în provocarea curentă
@@ -19,9 +20,11 @@ let bonusStatus = {
     adunare: false,
     scadere: false,
     numere: false,
-    precizie: false,
+    precizie: false, // Pentru bonusul "Maestru al Preciziei"
     viteza: false,
-    persitenta: false
+    persitenta: false,
+    lantulSuccesului: 0,
+    vartejulIntelepciunii: 0
 };
 let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
 const historyContainer = document.getElementById("exerciseList");
@@ -32,9 +35,11 @@ let bonusCounters = {
     adunare: 0,
     scadere: 0,
     numere: 0,
-    precizie: 0,
+    precizie: 0, // Pentru bonusul "Maestru al Preciziei"
     viteza: 0,
-    persitenta: 0
+    persitenta: 0,
+    lantulSuccesului: 0,
+    vartejulIntelepciunii: 0
 };
 let lastProblems = []; // Va stoca ultimele probleme generate sub forma de string-uri
 let operationType = 'all'
@@ -117,14 +122,15 @@ function checkAnswer() {
     if (userAnswer === correctAnswer) {
         bonusTracker[exerciseType]++;
         bonusTracker.persistenta++;
-        consecutiveCorrect++;
+        bonusTracker.precizie++;
+        bonusTracker.lantulSuccesului++;
+        bonusTracker.vartejulIntelepciunii++;
         exerciseCount++;
         incrementExercisesSolvedInChallenge();
         document.getElementById("exerciseCount").textContent = exerciseCount;
         updateNumbersUsed(document.getElementById("exercise").textContent);
         displayRandomMessage(true);
         addExerciseToHistory(true); // Adaugă exercițiul cu indicarea că este corect
-        correctConsecutive++;
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
         checkAndDisplayBonus();
         generateExercise(); // Generează un nou exercițiu
@@ -137,10 +143,13 @@ function checkAnswer() {
         playErrorSound();
         displayMessage("Incorect. Vei avea mai mult succes data viitoare!", 'error');
         addExerciseToHistory(false); // Adaugă exercițiul cu indicarea că este incorect
-        consecutiveCorrect = 0; // Resetează contorul pentru corecte consecutive
         generateExercise(); // Generează un nou exercițiu
-        correctConsecutive = 0; // Resetează contorul pentru răspunsuri corecte consecutive
-        updateProgress('Precizie', correctConsecutive);
+        bonusTracker.precizie = 0;
+        bonusTracker.lantulSuccesului = 0;
+        bonusTracker.vartejulIntelepciunii = 0;
+        updateProgress('Precizie', bonusTracker.precizie);
+        updateProgress('LantulSuccesului', bonusTracker.lantulSuccesului);
+        updateProgress('VartejulIntelepciunii', bonusTracker.vartejulIntelepciunii);
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul pentru următoarea întrebare
     }
     saveToLocalStorage(); // Salvăm starea curentă după fiecare răspuns verificat
@@ -212,17 +221,37 @@ function checkAndDisplayBonus() {
     updateProgress('Adunare', bonusTracker.adunare); // pentru adunare
     updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
     updateProgress('Numere', numbersUsed.size); // pentru numere utilizate
-    updateProgress('Precizie', correctConsecutive);
+    updateProgress('Precizie', bonusTracker.precizie);
+    updateProgress('LantulSuccesului', bonusTracker.lantulSuccesului);
+    updateProgress('VartejulIntelepciunii', bonusTracker.vartejulIntelepciunii);
     updateProgress('Persistenta', bonusTracker.persistenta);
 
     // Maestru al Preciziei
-    if (correctConsecutive >= 20) {
+    if (bonusTracker.precizie >= 20) {
         bonusStatus.precizie = true;
         bonusCounters.precizie++;
         createFallingEffect();
         showBonusCompletedPopup('Maestru al Preciziei', 'images/precision-master.webp');
         document.getElementById("bonusPrecizie").style.opacity = 1;
-        correctConsecutive = 0; // Resetează contorul după ce bonusul este acordat
+        bonusTracker.precizie = 0; // Resetează contorul după ce bonusul este acordat
+    }
+    // Lantul Succesului
+    if (bonusTracker.lantulSuccesului >= 50) {
+        bonusStatus.lantulSuccesului = true;
+        bonusCounters.lantulSuccesului++;
+        createFallingEffect();
+        showBonusCompletedPopup('Lanțul Succesului', 'images/lantul-succesului.webp');
+        document.getElementById("bonusLantulSuccesului").style.opacity = 1;
+        bonusTracker.lantulSuccesului = 0; // Resetează contorul după ce bonusul este acordat
+    }
+    // Vartejul Intelepciunii
+    if (bonusTracker.vartejulIntelepciunii >= 100) {
+        bonusStatus.vartejulIntelepciunii = true;
+        bonusCounters.vartejulIntelepciunii++;
+        createFallingEffect();
+        showBonusCompletedPopup('Vârtejul Înțelepciunii', 'images/vartejul-intelepciunii.webp');
+        document.getElementById("bonusVartejulIntelepciunii").style.opacity = 1;
+        bonusTracker.vartejulIntelepciunii = 0; // Resetează contorul după ce bonusul este acordat
     }
     // Resetarea tracker-ului la completarea bonusului
     if (bonusTracker.adunare >= maxAdunare) {
@@ -262,6 +291,8 @@ function updateUIForCounters() {
     document.getElementById("counterScadere").textContent = bonusCounters.scadere ?? 0;
     document.getElementById("counterNumere").textContent = bonusCounters.numere ?? 0;
     document.getElementById("counterPrecizie").textContent = bonusCounters.precizie ?? 0;
+    document.getElementById("counterLantulSuccesului").textContent = bonusCounters.lantulSuccesului ?? 0;
+    document.getElementById("counterVartejulIntelepciunii").textContent = bonusCounters.vartejulIntelepciunii ?? 0;
     document.getElementById("counterViteza").textContent = bonusCounters.viteza ?? 0;
     document.getElementById("counterPersistenta").textContent = bonusCounters.persitenta ?? 0;
 }
@@ -386,8 +417,6 @@ function saveToLocalStorage() {
         bonusTracker,
         numbersUsed: Array.from(numbersUsed),
         exerciseCount,
-        consecutiveCorrect,
-        correctConsecutive,
         exercisesSolvedInChallenge,
         bonusStatus,
         exercisesHistory,
@@ -419,8 +448,6 @@ function loadFromLocalStorage() {
         bonusTracker = appData?.bonusTracker ?? bonusTracker;
         numbersUsed = new Set(appData?.numbersUsed ?? []);
         exerciseCount = appData?.exerciseCount ?? 0;
-        consecutiveCorrect = appData?.consecutiveCorrect ?? 0;
-        correctConsecutive = appData?.correctConsecutive ?? 0;
         exercisesSolvedInChallenge = appData?.exercisesSolvedInChallenge ?? 0;
         bonusStatus = appData.bonusStatus || bonusStatus;
         bonusCounters = appData.bonusCounters || bonusCounters;
@@ -451,7 +478,9 @@ function loadFromLocalStorage() {
         updateProgress('Adunare', bonusTracker.adunare); // pentru adunare
         updateProgress('Scadere', bonusTracker.scadere); // pentru scădere
         updateProgress('Numere', numbersUsed.size); // pentru numere utilizate
-        updateProgress('Precizie', correctConsecutive);
+        updateProgress('Precizie', bonusTracker.precizie);
+        updateProgress('LantulSuccesului', bonusTracker.lantulSuccesului);
+        updateProgress('VartejulIntelepciunii', bonusTracker.vartejulIntelepciunii);
         updateProgress('Persistenta', bonusTracker.persistenta);
 
         // Restaurează opacitatea elementelor bonus dacă progresele corespunzătoare au fost atinse
