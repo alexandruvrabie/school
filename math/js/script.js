@@ -181,11 +181,12 @@ function displayMessage(message, type) {
 function checkAndDisplayBonus() {
     // Presupunând că avem 10 exerciții pentru adunare și scădere și 20 pentru aventurierNumeric
     const maxAdunare = 10, maxScadere = 10;
+    bonusData.bonusAventurierNumeric.progress = numbersUsed.size;
 
     // Actualizează progresul pentru fiecare tip de exercițiu
     updateProgress('bonusMaestruAdunarii', bonusData.bonusMaestruAdunarii.progress); // pentru adunare
     updateProgress('bonusVirtuozulScaderii', bonusData.bonusVirtuozulScaderii.progress); // pentru scădere
-    updateProgress('bonusAventurierNumeric', numbersUsed.size); // pentru numere utilizate
+    updateProgress('bonusAventurierNumeric', bonusData.bonusAventurierNumeric.progress); // pentru numere utilizate
     updateProgress('bonusMaestruPreciziei', bonusData.bonusMaestruPreciziei.progress);
     updateProgress('bonusLantulSuccesului', bonusData.bonusLantulSuccesului.progress);
     updateProgress('bonusVartejulIntelepciunii', bonusData.bonusVartejulIntelepciunii.progress);
