@@ -1,22 +1,20 @@
 let correctAnswer; // Răspunsul corect al exercițiului curent
 let attempts = 0; // Numărul de încercări pentru exercițiul curent
-let bonusTracker = {}; // Urmărește progresul pentru bonusuri specifice
 let numbersUsed = new Set(); // Pentru a urmări numerele utilizate în exerciții
 let exerciseCount = 0;
 let speedChallengeTimer; // Cronometru pentru provocarea de viteză
 let speedChallengeStart; // Timpul de start al provocării curente
 let exercisesSolvedInChallenge = 0; // Numărul de exerciții rezolvate în provocarea curentă
-let bonusStatus = {};
 let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
 const historyContainer = document.getElementById("exerciseList");
 let soundEnabled = true;
 let maxNumber = 20;
-let bonusCounters = {};
 let lastProblems = []; // Va stoca ultimele probleme generate sub forma de string-uri
 let operationType = 'addition_subtraction'
 let lastResults = []; // Inițializează o nouă listă pentru a urmări ultimele rezultate
 const historyLimit = 3; // Numărul de rezultate unice pe care dorim să le urmărim
 let bonusElements = {}; // Obiect pentru a stoca referințele la elementele bonusurilor
+let bonusData = {};
 
 function generateExercise() {
     let num1, num2, exerciseType, problemString, newResult;
@@ -63,7 +61,6 @@ function updateRange() {
     maxNumber = parseInt(document.getElementById('maxNumberSelect').value, 10) || maxNumber;
     operationType = document.getElementById('operationTypeSelect').value || operationType;
 
-
     // Resetează localStorage și salvează doar valorile min și max
     localStorage.clear();
     localStorage.setItem('maxNumber', maxNumber);
@@ -88,11 +85,11 @@ function checkAnswer() {
     attempts++; // Incrementăm numărul de încercări
 
     if (userAnswer === correctAnswer) {
-        bonusTracker[exerciseType]++;
-        bonusTracker.bonusPersistentaAbsoluta++;
-        bonusTracker.bonusMaestruPreciziei++;
-        bonusTracker.bonusLantulSuccesului++;
-        bonusTracker.bonusVartejulIntelepciunii++;
+        bonusData[exerciseType].progress++;
+        bonusData.bonusPersistentaAbsoluta.progress++;
+        bonusData.bonusMaestruPreciziei.progress++;
+        bonusData.bonusLantulSuccesului.progress++;
+        bonusData.bonusVartejulIntelepciunii.progress++;
         exerciseCount++;
         incrementExercisesSolvedInChallenge();
         document.getElementById("exerciseCount").textContent = exerciseCount;
@@ -112,12 +109,12 @@ function checkAnswer() {
         displayMessage("Incorect. Vei avea mai mult succes data viitoare!", 'error');
         addExerciseToHistory(false); // Adaugă exercițiul cu indicarea că este incorect
         generateExercise(); // Generează un nou exercițiu
-        bonusTracker.bonusMaestruPreciziei = 0;
-        bonusTracker.bonusLantulSuccesului = 0;
-        bonusTracker.bonusVartejulIntelepciunii = 0;
-        updateProgress('bonusMaestruPreciziei', bonusTracker.bonusMaestruPreciziei);
-        updateProgress('bonusLantulSuccesului', bonusTracker.bonusLantulSuccesului);
-        updateProgress('bonusVartejulIntelepciunii', bonusTracker.bonusVartejulIntelepciunii);
+        bonusData.bonusMaestruPreciziei.progress = 0;
+        bonusData.bonusLantulSuccesului.progress = 0;
+        bonusData.bonusVartejulIntelepciunii.progress = 0;
+        updateProgress('bonusMaestruPreciziei', bonusData.bonusMaestruPreciziei.progress);
+        updateProgress('bonusLantulSuccesului', bonusData.bonusLantulSuccesului.progress);
+        updateProgress('bonusVartejulIntelepciunii', bonusData.bonusVartejulIntelepciunii.progress);
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul pentru următoarea întrebare
     }
     saveToLocalStorage(); // Salvăm starea curentă după fiecare răspuns verificat
@@ -186,66 +183,66 @@ function checkAndDisplayBonus() {
     const maxAdunare = 10, maxScadere = 10;
 
     // Actualizează progresul pentru fiecare tip de exercițiu
-    updateProgress('bonusMaestruAdunarii', bonusTracker.bonusMaestruAdunarii); // pentru adunare
-    updateProgress('bonusVirtuozulScaderii', bonusTracker.bonusVirtuozulScaderii); // pentru scădere
+    updateProgress('bonusMaestruAdunarii', bonusData.bonusMaestruAdunarii.progress); // pentru adunare
+    updateProgress('bonusVirtuozulScaderii', bonusData.bonusVirtuozulScaderii.progress); // pentru scădere
     updateProgress('bonusAventurierNumeric', numbersUsed.size); // pentru numere utilizate
-    updateProgress('bonusMaestruPreciziei', bonusTracker.bonusMaestruPreciziei);
-    updateProgress('bonusLantulSuccesului', bonusTracker.bonusLantulSuccesului);
-    updateProgress('bonusVartejulIntelepciunii', bonusTracker.bonusVartejulIntelepciunii);
-    updateProgress('bonusPersistentaAbsoluta', bonusTracker.bonusPersistentaAbsoluta);
+    updateProgress('bonusMaestruPreciziei', bonusData.bonusMaestruPreciziei.progress);
+    updateProgress('bonusLantulSuccesului', bonusData.bonusLantulSuccesului.progress);
+    updateProgress('bonusVartejulIntelepciunii', bonusData.bonusVartejulIntelepciunii.progress);
+    updateProgress('bonusPersistentaAbsoluta', bonusData.bonusPersistentaAbsoluta.progress);
 
     // Maestru al Preciziei
-    if (bonusTracker.bonusMaestruPreciziei >= 20) {
-        bonusStatus.bonusMaestruPreciziei = true;
-        bonusCounters.bonusMaestruPreciziei++;
+    if (bonusData.bonusMaestruPreciziei.progress >= 20) {
+        bonusData.bonusMaestruPreciziei.status = true;
+        bonusData.bonusMaestruPreciziei.counter++;
+        bonusData.bonusMaestruPreciziei.progress = 0; // Resetează contorul după ce bonusul este acordat
         createFallingEffect();
         showBonusCompletedPopup('bonusMaestruPreciziei');
-        bonusTracker.bonusMaestruPreciziei = 0; // Resetează contorul după ce bonusul este acordat
     }
     // Lantul Succesului
-    if (bonusTracker.bonusLantulSuccesului >= 50) {
-        bonusStatus.bonusLantulSuccesului = true;
-        bonusCounters.bonusLantulSuccesului++;
+    if (bonusData.bonusLantulSuccesului.progress >= 50) {
+        bonusData.bonusLantulSuccesului.status = true;
+        bonusData.bonusLantulSuccesului.counter++;
+        bonusData.bonusLantulSuccesului.progress = 0; // Resetează contorul după ce bonusul este acordat
         createFallingEffect();
         showBonusCompletedPopup('bonusLantulSuccesului');
-        bonusTracker.bonusLantulSuccesului = 0; // Resetează contorul după ce bonusul este acordat
     }
     // Vartejul Intelepciunii
-    if (bonusTracker.bonusVartejulIntelepciunii >= 100) {
-        bonusStatus.bonusVartejulIntelepciunii = true;
-        bonusCounters.bonusVartejulIntelepciunii++;
+    if (bonusData.bonusVartejulIntelepciunii.progress >= 100) {
+        bonusData.bonusVartejulIntelepciunii.status = true;
+        bonusData.bonusVartejulIntelepciunii.counter++;
+        bonusData.bonusVartejulIntelepciunii.progress = 0; // Resetează contorul după ce bonusul este acordat
         createFallingEffect();
         showBonusCompletedPopup('bonusVartejulIntelepciunii');
-        bonusTracker.bonusVartejulIntelepciunii = 0; // Resetează contorul după ce bonusul este acordat
     }
     // Resetarea tracker-ului la completarea bonusului
-    if (bonusTracker.bonusMaestruAdunarii >= maxAdunare) {
-        bonusStatus.bonusMaestruAdunarii = true;
-        bonusCounters.bonusMaestruAdunarii++;
+    if (bonusData.bonusMaestruAdunarii.progress >= maxAdunare) {
+        bonusData.bonusMaestruAdunarii.status = true;
+        bonusData.bonusMaestruAdunarii.counter++;
+        bonusData.bonusMaestruAdunarii.progress = 0;
         createFallingEffect();
         showBonusCompletedPopup('bonusMaestruAdunarii');
-        bonusTracker.bonusMaestruAdunarii = 0;
     }
-    if (bonusTracker.bonusVirtuozulScaderii >= maxScadere) {
-        bonusStatus.bonusVirtuozulScaderii = true;
-        bonusCounters.bonusVirtuozulScaderii++;
+    if (bonusData.bonusVirtuozulScaderii.progress >= maxScadere) {
+        bonusData.bonusVirtuozulScaderii.status = true;
+        bonusData.bonusVirtuozulScaderii.counter++;
+        bonusData.bonusVirtuozulScaderii.progress = 0;
         createFallingEffect();
         showBonusCompletedPopup('bonusVirtuozulScaderii');
-        bonusTracker.bonusVirtuozulScaderii = 0;
     }
-    if (bonusTracker.bonusPersistentaAbsoluta >= 500) {
-        bonusStatus.bonusPersistentaAbsoluta = true;
-        bonusCounters.bonusPersistentaAbsoluta++;
+    if (bonusData.bonusPersistentaAbsoluta.progress >= 500) {
+        bonusData.bonusPersistentaAbsoluta.status = true;
+        bonusData.bonusPersistentaAbsoluta.counter++;
+        bonusData.bonusPersistentaAbsoluta.progress = 0;
         createFallingEffect();
         showBonusCompletedPopup('bonusPersistentaAbsoluta');
-        bonusTracker.bonusPersistentaAbsoluta = 0;
     }
     if (numbersUsed.size >= maxNumber) {
-        bonusStatus.bonusAventurierNumeric = true;
-        bonusCounters.bonusAventurierNumeric++;
+        bonusData.bonusAventurierNumeric.status = true;
+        bonusData.bonusAventurierNumeric.counter++;
+        bonusData.bonusAventurierNumeric.progress = 0;
         createFallingEffect();
         showBonusCompletedPopup('bonusAventurierNumeric');
-        bonusTracker.bonusAventurierNumeric = 0;
         numbersUsed.clear();
     }
     saveToLocalStorage(); // Salvăm starea curentă după verificarea bonusurilor
@@ -256,8 +253,8 @@ function updateUIForCounters() {
     // Iterează prin obiectul bonusElements pentru a actualiza contoarele
     Object.keys(bonusElements).forEach(bonusId => {
         // Asigură că avem un counter pentru acest tip de bonus înainte de a încerca să actualizăm UI-ul
-        if (bonusCounters.hasOwnProperty(bonusId)) {
-            const counterValue = bonusCounters[bonusId];
+        if (bonusData.hasOwnProperty(bonusId)) {
+            const counterValue = bonusData[bonusId].counter;
             const { counterSpan } = bonusElements[bonusId];
             if (counterSpan) {
                 counterSpan.textContent = counterValue ?? 0;
@@ -290,38 +287,31 @@ function updateNumbersUsed(exerciseText) {
     const numbers = exerciseText.match(/\d+/g).map(Number);
     numbers.forEach(number => numbersUsed.add(number));
     // Actualizează numărul de numere unice folosite
-    bonusTracker.bonusAventurierNumeric = numbersUsed.size;
+    bonusData.bonusAventurierNumeric.progress = numbersUsed.size;
 }
 
 function updateProgress(bonusId, progress) {
-    // Identifică elementul bonus direct folosind bonusId
-    const bonusItem = document.getElementById(bonusId);
-
-    if (bonusItem) {
-        // Folosește querySelector pentru a găsi elementul progress și imaginea în cadrul containerului bonusului
-        const progressElement = bonusItem.querySelector('.bonusProgress');
-        const image = bonusItem.querySelector('.bonusImage');
+    // Verifică dacă există referințe pentru acest bonus în obiectul bonusElements
+    if (bonusElements[bonusId]) {
+        // Extrage elementele necesare din structura bonusElements
+        const { progressElement, image } = bonusElements[bonusId];
 
         if (progressElement) {
             progressElement.value = progress ?? 0; // Actualizează progresul
 
-            // Verifică dacă progresul este complet.
+            // Verifică dacă progresul este complet
             if (progress >= progressElement.max) {
-                // Înlătură opacitatea pentru bonus completat
-                if (image) {
-                    image.style.opacity = 1;
-                    applyGlowEffect(image); // Aplică efectul de licărire pe imagine
-                }
+                image.style.opacity = 1; // Înlătură opacitatea imaginii pentru bonus completat
+                applyGlowEffect(image); // Aplică efectul de licărire pe imagine
             }
         }
     }
 }
 
 function updateAllProgress() {
-    // Iterează prin toate elementele de bonus și actualizează progresul
-    Object.keys(bonusTracker).forEach(bonusId => {
-        // Presupunând că există o corespondență directă între ID-ul bonusului în bonusTracker și ID-ul elementului în DOM
-        updateProgress(bonusId, bonusTracker[bonusId]);
+    Object.keys(bonusData).forEach(bonusId => {
+        const bonus = bonusData[bonusId];
+        updateProgress(bonusId, bonus.progress);
     });
 }
 
@@ -360,13 +350,11 @@ function playErrorSound() {
 }
 
 function applyGlowEffect(element) {
-    if (element && element.classList) {
+    if (element) {
         element.classList.add('glowEffect');
         setTimeout(() => {
             element.classList.remove('glowEffect');
         }, 5000); // 5000ms = 5 secunde
-    } else {
-        console.error('Elementul nu a fost găsit sau nu este valid:', element);
     }
 }
 
@@ -393,8 +381,8 @@ function incrementExercisesSolvedInChallenge() {
                     bonusImage.style.opacity = 1;
                 }
 
-                bonusStatus.bonusVitezaLuminii = true;
-                bonusCounters.bonusVitezaLuminii++;
+                bonusData.bonusVitezaLuminii.status = true;
+                bonusData.bonusVitezaLuminii.counter++;
                 createFallingEffect();
                 showBonusCompletedPopup('bonusVitezaLuminii');
 
@@ -412,15 +400,13 @@ function saveToLocalStorage() {
     soundEnabled = document.getElementById('soundToggleButton').getAttribute('data-enabled') === 'true';
     const appData = {
         soundEnabled,
-        bonusTracker,
         numbersUsed: Array.from(numbersUsed),
         exerciseCount,
         exercisesSolvedInChallenge,
-        bonusStatus,
         exercisesHistory,
         maxNumber,
-        bonusCounters,
-        operationType
+        operationType,
+        bonusData
     };
     localStorage.setItem('mathAppData', JSON.stringify(appData));
 }
@@ -443,10 +429,7 @@ function loadFromLocalStorage() {
     const appData = JSON.parse(localStorage.getItem('mathAppData')) || {};
     if (appData) {
         // Restaurarea stării variabilelor
-        Object.assign(bonusTracker, appData.bonusTracker);
-        Object.assign(bonusStatus, appData.bonusStatus);
-        Object.assign(bonusCounters, appData.bonusCounters);
-        bonusStatus = appData.bonusStatus || bonusStatus;
+        Object.assign(bonusData, appData.bonusData); // Asumând că ai salvat bonusData în localStorage
         numbersUsed = new Set(appData.numbersUsed ?? []);
         exerciseCount = appData.exerciseCount ?? 0;
         exercisesSolvedInChallenge = appData.exercisesSolvedInChallenge ?? 0;
@@ -474,13 +457,14 @@ function updateSoundButton() {
     button.textContent = soundEnabled ? 'Cu sunet' : 'Fără sunet';
 }
 
-
 function updateBonusStatusUI() {
-    Object.keys(bonusStatus).forEach(bonusId => {
-        if (bonusStatus[bonusId]) {
-            const bonusElement = document.getElementById(bonusId);
-            if (bonusElement) {
-                bonusElement.querySelector('.bonusImage').style.opacity = 1;
+    // Iterate through all bonus entries to update their UI based on their status
+    Object.keys(bonusData).forEach(bonusId => {
+        if (bonusData[bonusId].status) {
+            // If the bonus status is true, remove opacity from the image to indicate completion
+            const imageElement = bonusElements[bonusId].image; // Assuming bonusElements stores DOM references
+            if (imageElement) {
+                imageElement.style.opacity = 1;
             }
         }
     });
@@ -504,23 +488,21 @@ function refreshExerciseHistoryUI(history) {
 
 function updateProgressMax() {
     // Identificăm elementul de progres prin ID-ul containerului specific bonusului
-    const bonusAventurierNumeric = document.querySelector('#bonusAventurierNumeric .bonusProgress');
-    if (bonusAventurierNumeric) {
-        bonusAventurierNumeric.max = maxNumber;
+    if (bonusElements.bonusAventurierNumeric && bonusElements.bonusAventurierNumeric.progressElement) {
+        bonusElements.bonusAventurierNumeric.progressElement.max = maxNumber;
     }
 }
 
 function showBonusCompletedPopup(bonusId) {
     // Identifică elementul bonusItem folosind ID-ul primit
-    const bonusItem = document.getElementById(bonusId);
-    if (!bonusItem) {
+    if (!bonusElements[bonusId]) {
         console.error('Bonus item not found for ID:', bonusId);
         return;
     }
 
     // Extrage titlul bonusului și sursa imaginii direct din elementul bonusItem
-    const title = bonusItem.querySelector('.bonusTitle').textContent;
-    const imageSrc = bonusItem.querySelector('.bonusImage').src;
+    const title = bonusElements[bonusId].title.textContent;
+    const imageSrc = bonusElements[bonusId].image.src;
 
     // Implementează logica pentru a afișa popup-ul cu aceste detalii
     console.log(`Bonus completat: ${title}`);
@@ -571,14 +553,22 @@ document.addEventListener('DOMContentLoaded', function () {
     bonusItems.forEach(item => {
         // Presupunem că fiecare "bonusItem" are un ID unic și conține un span pentru contor și un img pentru imagine
         const bonusId = item.id;
+        const title = item.querySelector('.bonusTitle');
         const counterSpan = item.querySelector('span');
         const image = item.querySelector('img');
+        const progressElement = item.querySelector('progress');
 
-        // Stochează referințele la elementele necesare în obiectul bonusElements, folosind ID-ul bonusului ca cheie
-        bonusElements[bonusId] = { counterSpan, image };
-        bonusTracker[bonusId] = 0;
-        bonusCounters[bonusId] = 0;
-        bonusStatus[bonusId] = false;
+        // Populăm `bonusElements` cu referințele la elementele DOM
+        bonusElements[bonusId] = { title, counterSpan, image, progressElement };
+
+        // Inițializăm sau restaurăm `bonusData` cu valorile salvate sau cu valori implicite
+        if (!bonusData[bonusId]) {
+            bonusData[bonusId] = {
+                progress: 0,
+                counter: 0,
+                status: false,
+            };
+        }
     });
 
     loadFromLocalStorage();
