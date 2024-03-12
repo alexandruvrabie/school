@@ -206,6 +206,8 @@ button:hover {
 }
 
 .bonusItem {
+    position: relative;
+    cursor: pointer;
     border: 1px solid #ccc; /* Adaugă o bordură subtilă */
     padding: 20px; /* Spațiu în interiorul fiecărui element de bonus */
     margin-bottom: 20px; /* Spațiu între elementele de bonus */
@@ -217,6 +219,26 @@ button:hover {
     align-items: center; /* Centrează conținutul pe verticală */
     text-align: center; /* Alinează textul la centru */
     flex: 0 1 calc(25% - 20px); /* Calculează flex-basis pentru 4 elemente per rând minus gap */
+}
+
+.bonusOverlay {
+    display: none; /* Inițial, overlay-ul este ascuns */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 215, 0, 0.9); /* Un galben deschis pentru fundal */
+    color: #3A5BA0; /* Albastru pentru text */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 10;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Font vesel și prietenos */
+    font-size: 1.5rem; /* O dimensiune a fontului care echilibrează lizibilitatea cu spațiul */
 }
 
 .bonusTitle {
@@ -301,6 +323,9 @@ button:hover {
     .bonusImage {
         width: 120px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
         height: auto;
+    }
+    .bonusOverlay {
+        font-size: 1.2rem;
     }
 }
 

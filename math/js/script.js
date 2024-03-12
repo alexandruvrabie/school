@@ -546,6 +546,32 @@ function incrementAllChallenges() {
     });
 }
 
+document.querySelectorAll('.bonusItem').forEach(item => {
+    item.addEventListener('click', function() {
+        let overlay = this.querySelector('.bonusOverlay');
+
+        // Crearea overlay-ului dacă acesta nu există
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'bonusOverlay';
+            overlay.style.display = 'flex'; // Se afișează initial
+
+            const description = this.querySelector('img').getAttribute('title');
+            overlay.innerHTML = `<p>${description}</p>`;
+            this.appendChild(overlay);
+
+            // Ascunderea overlay-ului la click
+            overlay.addEventListener('click', function(e) {
+                e.stopPropagation(); // Previne bubbling-ul către elementul părinte
+                this.style.display = 'none';
+            });
+        } else {
+            // Alternarea afișării overlay-ului
+            overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
+        }
+    });
+});
+
 // Adăugați listeneri pentru inputuri pentru a actualiza intervalul la schimbare
 document.getElementById('maxNumberSelect').addEventListener('change', updateRange);
 document.getElementById('operationTypeSelect').addEventListener('change', updateRange);
