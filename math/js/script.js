@@ -2,9 +2,6 @@ let correctAnswer; // Răspunsul corect al exercițiului curent
 let attempts = 0; // Numărul de încercări pentru exercițiul curent
 let numbersUsed = new Set(); // Pentru a urmări numerele utilizate în exerciții
 let exerciseCount = 0;
-let speedChallengeTimer; // Cronometru pentru provocarea de viteză
-let speedChallengeStart; // Timpul de start al provocării curente
-let exercisesSolvedInChallenge = 0; // Numărul de exerciții rezolvate în provocarea curentă
 let exercisesHistory = []; // Inițializăm lista de istoric a exercițiilor
 const historyContainer = document.getElementById("exerciseList");
 let soundEnabled = true;
@@ -15,6 +12,29 @@ let lastResults = []; // Inițializează o nouă listă pentru a urmări ultimel
 const historyLimit = 3; // Numărul de rezultate unice pe care dorim să le urmărim
 let bonusElements = {}; // Obiect pentru a stoca referințele la elementele bonusurilor
 let bonusData = {};
+let speedChallenges = {
+    bonusCursaCrocodilului: {
+        timeLimit: 60000,
+        maxExercises: 10,
+        exercisesSolved: 0,
+        timer: null,
+        progressElementId: 'bonusCursaCrocodilului',
+    },
+    bonusFulgerAlbastru: {
+        timeLimit: 100000,
+        maxExercises: 20,
+        exercisesSolved: 0,
+        timer: null,
+        progressElementId: 'bonusFulgerAlbastru',
+    },
+    bonusVitezaLuminii: {
+        timeLimit: 200000,
+        maxExercises: 50,
+        exercisesSolved: 0,
+        timer: null,
+        progressElementId: 'bonusVitezaLuminii',
+    }
+};
 
 function generateExercise() {
     let num1, num2, exerciseType, problemString, newResult;
@@ -91,7 +111,7 @@ function checkAnswer() {
         bonusData.bonusLantulSuccesului.progress++;
         bonusData.bonusVartejulIntelepciunii.progress++;
         exerciseCount++;
-        incrementExercisesSolvedInChallenge();
+        incrementAllChallenges();
         document.getElementById("exerciseCount").textContent = exerciseCount;
         updateNumbersUsed(document.getElementById("exercise").textContent);
         displayRandomMessage(true);
@@ -165,16 +185,6 @@ function displayMessage(message, type) {
     messageElement.className = type === "error" ? "errorMessage" : "successMessage";
     messageElement.style.opacity = 1; // Asigură că mesajul este vizibil
     messageElement.style.animation = 'none'; // Întrerupe și resetează animația
-
-    // Asigură-te că resetarea și repornirea animației sunt aplicate
-    setTimeout(() => {
-        messageElement.style.animation = ''; // Resetează animația
-    }, 10); // O mică întârziere este necesară pentru a asigura resetarea animației
-
-    // Setează un nou temporizator pentru a gestiona dispariția treptată
-    messageTimeout = setTimeout(() => {
-        messageElement.style.opacity = 0; // Inițiază dispariția treptată
-    }, 10000); // Începe efectul de dispariție după 4 secunde
 }
 
 
@@ -317,28 +327,29 @@ function updateAllProgress() {
 }
 
 // Funcția pentru a începe sau a reporni provocarea de viteză
-function startSpeedChallenge() {
+function startChallenge(challengeKey, timeLimit) {
     // Resetăm contorul de exerciții și barul de progres la începutul fiecărei provocări
-    exercisesSolvedInChallenge = 0;
-    updateProgress('bonusVitezaLuminii', 0);
+    bonusData[challengeKey].progress = 0;
+    updateProgress(challengeKey, 0);
 
     // Setăm timpul de start al provocării curente
-    speedChallengeStart = Date.now();
+    bonusData[challengeKey].startTime = Date.now();
 
     // Dacă există deja un cronometru în execuție, îl oprim
-    if (speedChallengeTimer) {
-        clearInterval(speedChallengeTimer);
+    if (bonusData[challengeKey].timer) {
+        clearInterval(bonusData[challengeKey].timer);
     }
 
     // Inițiem un nou cronometru pentru provocare
-    speedChallengeTimer = setInterval(() => {
-        const elapsedTime = Date.now() - speedChallengeStart;
-        // Dacă au trecut 60 de secunde, resetăm provocarea
-        if (elapsedTime >= 60000) {
+    bonusData[challengeKey].timer = setInterval(() => {
+        const elapsedTime = Date.now() - bonusData[challengeKey].startTime;
+        if (elapsedTime >= timeLimit) {
             // Oprim cronometrul
-            clearInterval(speedChallengeTimer);
+            clearInterval(bonusData[challengeKey].timer);
+            // Acțiuni la finalul timpului, de exemplu resetarea provocării sau afișarea unui mesaj
+            console.log(`${challengeKey} a atins limita de timp.`);
             // Resetăm și pornim din nou provocarea
-            startSpeedChallenge();
+            startChallenge(challengeKey, timeLimit);
         }
     }, 1000); // Verificăm timpul la fiecare secundă
 }
@@ -360,39 +371,30 @@ function applyGlowEffect(element) {
 }
 
 // Funcția care este apelată la fiecare răspuns corect al utilizatorului
-function incrementExercisesSolvedInChallenge() {
-    const maxExercises = 10;
-    exercisesSolvedInChallenge++;
-    // Găsește containerul bonusului pentru Viteza Luminii
-    const bonusVitezaLuminii = document.getElementById("bonusVitezaLuminii");
+function incrementExerciseSolved(challengeKey, maxExercises, timeLimit) {
+    // Verifică dacă provocarea este activă și actualizează progresul
+    if (bonusData[challengeKey]) {
+        bonusData[challengeKey].progress++;
 
-    if (bonusVitezaLuminii) {
-        // Folosește querySelector pentru a găsi elementul progress în cadrul containerului bonusului
-        const progressElement = bonusVitezaLuminii.querySelector('.bonusProgress');
-        if (progressElement) {
-            progressElement.value = exercisesSolvedInChallenge;
+        // Actualizează bara de progres în UI
+        updateProgress(challengeKey, bonusData[challengeKey].progress);
 
-            if (exercisesSolvedInChallenge >= maxExercises) {
-                console.log("Provocarea Viteza Luminii completată cu succes!");
+        // Verifică dacă numărul de exerciții rezolvate a atins numărul maxim necesar
+        if (bonusData[challengeKey].progress >= maxExercises) {
+            console.log(`Provocarea ${challengeKey} completată cu succes!`);
 
-                // Găsește imaginea în cadrul containerului bonusului și actualizează-i opacitatea
-                const bonusImage = bonusVitezaLuminii.querySelector('.bonusImage');
-                if (bonusImage) {
-                    applyGlowEffect(bonusImage);
-                    bonusImage.style.opacity = 1;
-                }
+            // Marchează provocarea ca fiind completată
+            bonusData[challengeKey].status = true;
+            bonusData[challengeKey].counter++;
 
-                bonusData.bonusVitezaLuminii.status = true;
-                bonusData.bonusVitezaLuminii.counter++;
-                createFallingEffect();
-                showBonusCompletedPopup('bonusVitezaLuminii');
+            // Resetarea progresului pentru o nouă provocare, dacă este necesar
+            bonusData[challengeKey].progress = 0;
+            updateProgress(challengeKey, 0); // Resetează bara de progres în UI
+            createFallingEffect();
+            showBonusCompletedPopup(challengeKey);
 
-                clearInterval(speedChallengeTimer);
-                startSpeedChallenge();
-                // Resetează contorul pentru a începe din nou provocarea
-                exercisesSolvedInChallenge = 0;
-                progressElement.value = 0;
-            }
+            clearInterval(bonusData[challengeKey].timer);
+            startChallenge(challengeKey, timeLimit);
         }
     }
 }
@@ -403,7 +405,6 @@ function saveToLocalStorage() {
         soundEnabled,
         numbersUsed: Array.from(numbersUsed),
         exerciseCount,
-        exercisesSolvedInChallenge,
         exercisesHistory,
         maxNumber,
         operationType,
@@ -433,7 +434,6 @@ function loadFromLocalStorage() {
         Object.assign(bonusData, appData.bonusData); // Asumând că ai salvat bonusData în localStorage
         numbersUsed = new Set(appData.numbersUsed ?? []);
         exerciseCount = appData.exerciseCount ?? 0;
-        exercisesSolvedInChallenge = appData.exercisesSolvedInChallenge ?? 0;
 
         // Actualizează contoarele și statusul bonusurilor folosind noua structură
         updateUIForCounters();
@@ -526,6 +526,20 @@ function showBonusCompletedPopup(bonusId) {
         setTimeout(() => document.body.removeChild(popup), 600); // Îl șterge după ce animația de opacitate s-a încheiat
     }, 5000);
 }
+
+function startAllChallenges() {
+    Object.keys(speedChallenges).forEach(challengeKey => {
+        const { timeLimit, maxExercises } = speedChallenges[challengeKey];
+        startChallenge(challengeKey, timeLimit, maxExercises);
+    });
+}
+
+function incrementAllChallenges() {
+    Object.keys(speedChallenges).forEach(challengeKey => {
+        incrementExerciseSolved(challengeKey, speedChallenges[challengeKey].maxExercises, speedChallenges[challengeKey].timeLimit);
+    });
+}
+
 // Adăugați listeneri pentru inputuri pentru a actualiza intervalul la schimbare
 document.getElementById('maxNumberSelect').addEventListener('change', updateRange);
 document.getElementById('operationTypeSelect').addEventListener('change', updateRange);
@@ -574,7 +588,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadFromLocalStorage();
     updateProgressMax();
-    startSpeedChallenge(); // Asigurați-vă că aceasta este apelată după încărcarea datelor
+
+    startAllChallenges();
 
     // Listener pentru butonul de resetare
     document.getElementById('resetButton').addEventListener('click', function () {

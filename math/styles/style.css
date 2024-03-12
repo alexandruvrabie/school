@@ -168,7 +168,7 @@ button:hover {
 #message {
     color: #FF4500;
     font-size: 2rem;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 #answer.correct {
     border-color: #4CAF50; /* Verde, o culoare frecvent asociată cu succesul */
@@ -191,15 +191,6 @@ button:hover {
 }
 #message.errorMessage {
     color: #FF4500;
-}
-
-.bonusImage {
-    width: 100px;
-    height: auto;
-    display: block;
-    margin: 10px auto;
-    opacity: 0.3; /* Inițializează imaginile bonus ca fiind "pale" */
-    transition: opacity 0.5s ease; /* Opțional: Adaugă o tranziție pentru efect vizual plăcut */
 }
 
 #bonusContainer {
@@ -237,7 +228,7 @@ button:hover {
 }
 
 .bonusImage {
-    width: 100px;
+    width: 140px;
     height: auto;
     margin: 0 auto 10px; /* Spațiu între imagine și bara de progres */
     opacity: 0.3;
@@ -303,13 +294,8 @@ button:hover {
     }
 
     .bonusImage {
-        width: 130px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
+        width: 120px; /* Opțional: ajustează și dimensiunea imaginilor de bonus dacă este necesar */
         height: auto;
-    }
-}
-@media (max-width: 768px) {
-    .bonusItem {
-        flex: 0 1 calc(50% - 20px); /* Ajustează pentru 2 elemente per rând pe ecrane mai mici */
     }
 }
 
