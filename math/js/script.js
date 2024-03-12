@@ -11,6 +11,7 @@ let operationType = 'addition_subtraction'
 let lastResults = []; // Inițializează o nouă listă pentru a urmări ultimele rezultate
 const historyLimit = 3; // Numărul de rezultate unice pe care dorim să le urmărim
 let bonusElements = {}; // Obiect pentru a stoca referințele la elementele bonusurilor
+let isFirstExercise = true;
 let bonusData = {};
 let speedChallenges = {
     bonusCursaCrocodilului: {
@@ -118,6 +119,11 @@ function checkAnswer() {
         addExerciseToHistory(true); // Adaugă exercițiul cu indicarea că este corect
         document.getElementById("answer").placeholder = '?'; // Resetează placeholder-ul dacă răspunsul este corect
         checkAndDisplayBonus();
+        if (isFirstExercise) {
+            // Ascunde descrierea după rezolvarea corectă a primului exercițiu
+            document.getElementById("exerciseDescription").style.display = "none";
+            isFirstExercise = false; // Asigură-te că descrierea nu va fi ascunsă din nou la exercițiile următoare
+        }
         generateExercise(); // Generează un nou exercițiu
     } else if (attempts < 2) {
         playErrorSound();

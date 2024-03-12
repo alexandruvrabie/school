@@ -119,7 +119,12 @@ label {
     border-radius: 10px;
     margin: 10px 0;
 }
-
+#exerciseDescription {
+    font-size: 1.5rem; /* Mărimea textului */
+    text-align: center; /* Centrarea textului */
+    color: #333; /* Culoarea textului */
+    margin-bottom: 10px; /* Spațiu sub descriere, ajustează dacă este necesar */
+}
 #exercise {
     font-size: 3.5rem;
     margin-right: 10px;
