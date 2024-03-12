@@ -237,7 +237,7 @@ button:hover {
     padding: 10px;
     box-sizing: border-box;
     z-index: 10;
-    font-family: 'Comic Sans MS', cursive, sans-serif; /* Font vesel și prietenos */
+    font-family: 'Comic Sans MS', 'Arial', sans-serif; /* Font vesel și prietenos */
     font-size: 1.5rem; /* O dimensiune a fontului care echilibrează lizibilitatea cu spațiul */
 }
 
