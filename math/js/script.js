@@ -36,6 +36,7 @@ let speedChallenges = {
         progressElementId: 'bonusVitezaLuminii',
     }
 };
+let complexitySettings = 'standard';
 
 function generateExercise() {
     let num1, num2, exerciseType, problemString, newResult;
@@ -77,16 +78,18 @@ function generateExercise() {
     }
 }
 
-function updateRange() {
+function updateSettings() {
     // Actualizează valorile minime și maxime bazate pe inputul utilizatorului
     maxNumber = parseInt(document.getElementById('maxNumberSelect').value, 10) || maxNumber;
     operationType = document.getElementById('operationTypeSelect').value || operationType;
+    complexitySettings = document.getElementById('complexitySelect').value || complexitySettings;
 
     // Resetează localStorage și salvează doar valorile min și max
     localStorage.clear();
     localStorage.setItem('maxNumber', maxNumber);
     localStorage.setItem('operationType', operationType);
     localStorage.setItem('soundEnabled', soundEnabled);
+    localStorage.setItem('complexitySettings', complexitySettings);
 
     // Reîncărcăm pagina pentru a aplica schimbările
     window.location.reload();
@@ -125,14 +128,14 @@ function checkAnswer() {
             isFirstExercise = false; // Asigură-te că descrierea nu va fi ascunsă din nou la exercițiile următoare
         }
         generateExercise(); // Generează un nou exercițiu
-    } else if (attempts < 2) {
+    } else if (attempts < 2 && complexitySettings === 'standard') {
         playErrorSound();
         displayRandomMessage(false);
         document.getElementById("answer").placeholder = userAnswer; // Setează răspunsul greșit ca placeholder
         document.getElementById("answer").value = ''; // Golește câmpul de input pentru o nouă încercare
     } else {
         playErrorSound();
-        displayMessage("Incorect. Vei avea mai mult succes data viitoare!", 'error');
+        displayRandomMessage(false);
         addExerciseToHistory(false); // Adaugă exercițiul cu indicarea că este incorect
         generateExercise(); // Generează un nou exercițiu
         bonusData.bonusMaestruPreciziei.progress = 0;
@@ -170,7 +173,8 @@ const errorMessages = [
     "Eroare. Gândește-te mai bine.",
     "Răspuns greșit, dar nu te descuraja.",
     "Mai încearcă! Ești aproape de răspunsul corect.",
-    "Nu e corect, dar efortul contează."
+    "Nu e corect, dar efortul contează.",
+    "Incorect. Vei avea mai mult succes data viitoare!"
 ];
 
 function getRandomMessage(messages) {
@@ -430,6 +434,11 @@ function loadFromLocalStorage() {
 
     document.getElementById('operationTypeSelect').value = operationType;
 
+    const savedComplexitySettings = localStorage.getItem('complexitySettings');
+    if (savedComplexitySettings !== null) complexitySettings = savedComplexitySettings;
+
+    document.getElementById('complexitySelect').value = complexitySettings;
+
     soundEnabled = localStorage.getItem('soundEnabled') ?? soundEnabled;
     document.getElementById('soundToggleButton').setAttribute('data-enabled', soundEnabled.toString());
     updateSoundButton();
@@ -573,9 +582,9 @@ document.querySelectorAll('.bonusItem').forEach(item => {
 });
 
 // Adăugați listeneri pentru inputuri pentru a actualiza intervalul la schimbare
-document.getElementById('maxNumberSelect').addEventListener('change', updateRange);
-document.getElementById('operationTypeSelect').addEventListener('change', updateRange);
-
+document.getElementById('maxNumberSelect').addEventListener('change', updateSettings);
+document.getElementById('operationTypeSelect').addEventListener('change', updateSettings);
+document.getElementById('complexitySelect').addEventListener('change', updateSettings)
 document.getElementById('answer').addEventListener('keypress', function(event) {
     if (event.key === "Enter") {
         event.preventDefault();
