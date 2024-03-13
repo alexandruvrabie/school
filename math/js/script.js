@@ -50,18 +50,25 @@ function generateExercise() {
             exerciseType = operationType; // 'addition' sau 'subtraction', conform selecției
         }
 
-        if (exerciseType === "addition") {
+        if (exerciseType === "multiplication") {
+            // Generează numere pentru înmulțire
+            num1 = Math.floor(Math.random() * 8) + 2; // Numere între 2 și 9 pentru a menține exercițiile prietenoase pentru clasele primare
+            num2 = Math.floor(Math.random() * 8) + 2;
+            newResult = num1 * num2;
+            problemString = `${num1} × ${num2}`;
+        } else if (exerciseType === "addition") {
             num1 = Math.floor(Math.random() * (maxNumber - 1)) + 1;
             let maxForNum2 = maxNumber - num1;
             num2 = Math.floor(Math.random() * (maxForNum2)) + 1;
+            newResult = num1 + num2;
+            problemString = `${num1} + ${num2}`;
         } else { // subtraction
             num1 = Math.floor(Math.random() * maxNumber) + 1;
             num2 = Math.floor(Math.random() * num1) + 1;
+            newResult = num1 - num2;
+            problemString = `${num1} - ${num2}`;
         }
-
-        newResult = exerciseType === "addition" ? num1 + num2 : num1 - num2;
-        problemString = `${num1} ${exerciseType === "addition" ? "+" : "-"} ${num2}`;
-    } while (lastProblems.includes(problemString) || lastResults.includes(newResult)); // Verifică dacă rezultatul a fost generat în ultimele 3 iterații
+    } while (lastProblems.includes(problemString) || lastResults.includes(newResult)); // Verifică dacă problema sau rezultatul a fost generat recent
 
     correctAnswer = newResult;
     document.getElementById("exercise").innerHTML = problemString + " = ";
@@ -98,7 +105,9 @@ function updateSettings() {
 function checkAnswer() {
     const userAnswer = parseInt(document.getElementById("answer").value, 10);
     const exerciseText = document.getElementById("exercise").textContent;
-    const exerciseType = exerciseText.includes("+") ? "bonusMaestruAdunarii" : "bonusVirtuozulScaderii";
+    const exerciseType = exerciseText.includes("+") ? "bonusMaestruAdunarii" :
+        exerciseText.includes("-") ? "bonusVirtuozulScaderii" :
+            "bonusPionieriiInmultirii"; // Asumăm că adaugi un ID corespunzător pentru bonusul de înmulțire
 
     // Verifică dacă răspunsul este un număr
     if (isNaN(userAnswer)) {
@@ -114,6 +123,7 @@ function checkAnswer() {
         bonusData.bonusMaestruPreciziei.progress++;
         bonusData.bonusLantulSuccesului.progress++;
         bonusData.bonusVartejulIntelepciunii.progress++;
+        bonusData.bonusPionieriiInmultirii.progress++;
         exerciseCount++;
         incrementAllChallenges();
         document.getElementById("exerciseCount").textContent = exerciseCount;
@@ -204,13 +214,7 @@ function checkAndDisplayBonus() {
     bonusData.bonusAventurierNumeric.progress = numbersUsed.size;
 
     // Actualizează progresul pentru fiecare tip de exercițiu
-    updateProgress('bonusMaestruAdunarii', bonusData.bonusMaestruAdunarii.progress); // pentru adunare
-    updateProgress('bonusVirtuozulScaderii', bonusData.bonusVirtuozulScaderii.progress); // pentru scădere
-    updateProgress('bonusAventurierNumeric', bonusData.bonusAventurierNumeric.progress); // pentru numere utilizate
-    updateProgress('bonusMaestruPreciziei', bonusData.bonusMaestruPreciziei.progress);
-    updateProgress('bonusLantulSuccesului', bonusData.bonusLantulSuccesului.progress);
-    updateProgress('bonusVartejulIntelepciunii', bonusData.bonusVartejulIntelepciunii.progress);
-    updateProgress('bonusPersistentaAbsoluta', bonusData.bonusPersistentaAbsoluta.progress);
+    updateAllProgress();
 
     // Maestru al Preciziei
     if (bonusData.bonusMaestruPreciziei.progress >= 20) {
@@ -250,6 +254,13 @@ function checkAndDisplayBonus() {
         bonusData.bonusVirtuozulScaderii.progress = 0;
         createFallingEffect();
         showBonusCompletedPopup('bonusVirtuozulScaderii');
+    }
+    if (bonusData.bonusPionieriiInmultirii.progress >= 50) {
+        bonusData.bonusPionieriiInmultirii.status = true;
+        bonusData.bonusPionieriiInmultirii.counter++;
+        bonusData.bonusPionieriiInmultirii.progress = 0;
+        createFallingEffect();
+        showBonusCompletedPopup('bonusPionieriiInmultirii');
     }
     if (bonusData.bonusPersistentaAbsoluta.progress >= 500) {
         bonusData.bonusPersistentaAbsoluta.status = true;

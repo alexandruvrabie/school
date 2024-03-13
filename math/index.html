@@ -27,7 +27,7 @@
 <body>
 
 <div class="container">
-    <h2>Matematică: adunarea și scăderea</h2>
+    <h2>Matematică: adunarea, scăderea și înmulțirea</h2>
     <button id="toggleSettingsButton">Arată Setările</button>
 
     <div id="settingsContainer" style="display: none;">
@@ -49,6 +49,7 @@
                     <option value="addition_subtraction">Adunare și scădere</option>
                     <option value="addition">Doar adunare</option>
                     <option value="subtraction">Doar scădere</option>
+                    <option value="multiplication">Doar înmulțire</option>
                 </select>
             </div>
         </div>
@@ -86,6 +87,13 @@
             <img src="images/virtuozul-scaderii.webp" alt="Bonus Scădere" class="bonusImage"
                  title="Completează 10 exerciții de scădere!">
             <progress value="0" max="10" class="bonusProgress"></progress>
+        </div>
+        <div class="bonusItem" id="bonusPionieriiInmultirii">
+            <div class="bonusTitle">Pionierii Înmulțirii</div>
+            <div>Victorii: <span id="counterPionieriiInmultirii">0</span></div>
+            <img src="images/pionierii-inmultirii.webp" alt="Bonus Pionierii Înmulțirii" class="bonusImage"
+                 title="Completează 50 exerciții de înmulțire!">
+            <progress value="0" max="50" class="bonusProgress"></progress>
         </div>
         <div class="bonusItem" id="bonusCursaCrocodilului">
             <div class="bonusTitle">Cursa Crocodilului</div>
