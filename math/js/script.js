@@ -123,7 +123,6 @@ function checkAnswer() {
         bonusData.bonusMaestruPreciziei.progress++;
         bonusData.bonusLantulSuccesului.progress++;
         bonusData.bonusVartejulIntelepciunii.progress++;
-        bonusData.bonusPionieriiInmultirii.progress++;
         exerciseCount++;
         incrementAllChallenges();
         document.getElementById("exerciseCount").textContent = exerciseCount;
