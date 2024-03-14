@@ -565,6 +565,25 @@ function incrementAllChallenges() {
     });
 }
 
+function updateBonusVisibility() {
+    // Ascunde toate bonusurile
+    bonusElements.bonusMaestruAdunarii.item.style.display = 'none';
+    bonusElements.bonusVirtuozulScaderii.item.style.display = 'none';
+    bonusElements.bonusPionieriiInmultirii.item.style.display = 'none';
+
+    // Afișează doar bonusurile relevante pentru operația selectată
+    if (operationType === 'addition_subtraction') {
+        bonusElements.bonusMaestruAdunarii.item.style.display = 'block';
+        bonusElements.bonusVirtuozulScaderii.item.style.display = 'block';
+    } else if (operationType === 'addition') {
+        bonusElements.bonusMaestruAdunarii.item.style.display = 'block';
+    } else if (operationType === 'subtraction') {
+        bonusElements.bonusVirtuozulScaderii.item.style.display = 'block';
+    } else if (operationType === 'multiplication') {
+        bonusElements.bonusPionieriiInmultirii.item.style.display = 'block';
+    }
+}
+
 document.querySelectorAll('.bonusItem').forEach(item => {
     item.addEventListener('click', function() {
         let overlay = this.querySelector('.bonusOverlay');
@@ -625,7 +644,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const progressElement = item.querySelector('progress');
 
         // Populăm `bonusElements` cu referințele la elementele DOM
-        bonusElements[bonusId] = { title, counterSpan, image, progressElement };
+        bonusElements[bonusId] = { item, title, counterSpan, image, progressElement };
 
         // Inițializăm sau restaurăm `bonusData` cu valorile salvate sau cu valori implicite
         if (!bonusData[bonusId]) {
@@ -639,7 +658,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadFromLocalStorage();
     updateProgressMax();
-
+    updateBonusVisibility();
     startAllChallenges();
 
     // Listener pentru butonul de resetare
